@@ -89,12 +89,34 @@ body.auth-page {
   position: relative;
 }
 
+.input-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
 .input-box label {
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  margin-bottom: 6px;
   color: var(--text-glow);
+}
+
+.input-box:not(:has(.input-label-row)) label {
+  margin-bottom: 6px;
+}
+
+.forgot-link {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.forgot-link:hover {
+  color: var(--accent-primary);
+  text-shadow: 0 0 8px var(--accent-primary);
 }
 
 .input-box input {
@@ -179,4 +201,52 @@ body.auth-page {
 
 .auth-nav-home a:hover {
   color: var(--accent-primary);
+}
+
+/* کارت هشدار پیوند نامعتبر بازیابی */
+.invalid-link-box {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  border-radius: 14px;
+  padding: 20px 16px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.invalid-link-icon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.invalid-link-title {
+  color: #fca5a5;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.invalid-link-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.btn-action-outline {
+  display: inline-block;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--accent-primary);
+  border-radius: 10px;
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition: all 0.25s ease;
+}
+
+.btn-action-outline:hover {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: var(--glow-strong);
 }

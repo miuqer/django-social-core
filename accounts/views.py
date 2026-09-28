@@ -2,6 +2,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import MyUser, Profile, Follow
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 
 def register_view(request):
@@ -190,9 +195,95 @@ def toggle_follow(request, user_id):
 
 
 def password_reset_request_view(request):
-    if not request.user.is_authenticated:
-        return redirect("accounts:login")
+    # ۲. پردازش فرم ارسال ایمیل
     if request.method == "POST":
-        email_input = request.POST.get("email")
-    if not email_input:
-        messages.error(request, "لطفا ایمیل خود را وارد کنید")
+        email_input = request.POST.get("email", "").strip()
+
+        if not email_input:
+            messages.error(request, "لطفاً فرکانس ایمیل خود را وارد کنید.")
+            return render(request, "accounts/password_reset.html")
+
+        user = MyUser.objects.filter(email=email_input).first()
+
+        # ۳. تولید کلید رمزنگاری‌شده و ارسال لینک در صورت وجود کاربر
+        if user:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+
+            reset_link = request.build_absolute_uri(
+                reverse(
+                    "accounts:password_reset_confirm",
+                    kwargs={"uidb64": uid, "token": token},
+                )
+            )
+
+            subject = "فرمان بازیابی دسترسی به مدار InstaOrbit"
+            message = (
+                f"درود فضانورد {user.username}!\n\n"
+                f"جهت تعیین رمز عبور جدید، پیوند زیر را باز کنید:\n"
+                f"{reset_link}\n\n"
+                f"اگر این درخواست از سوی شما ارسال نشده، آن را نادیده بگیرید."
+            )
+
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=None,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+        # ۴. پیام خروجی برای حفظ امنیت هویت کاربران
+        messages.success(
+            request,
+            "اگر حساب فعالی با این ایمیل ثبت باشد، پیوند بازیابی برای شما مخابره شد.",
+        )
+        if request.user.is_authenticated:
+            return redirect(request.META.get("HTTP_REFERER", "accounts:profile"))
+        return redirect("accounts:login")
+
+    # ۵. رندر صفحه در درخواست GET
+    return render(request, "accounts/password_reset.html")
+
+
+def password_reset_confirm_view(request, uidb64, token):
+    # ۱. رمزگشایی شناسه کاربر از Base64 و واکشی از دیتابیس
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = MyUser.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
+        user = None
+
+    # ۲. بررسی معتبر بودن کاربر و امضای دیجیتال توکن
+    if user is not None and default_token_generator.check_token(user, token):
+        validlink = True
+
+        # ۳. دریافت و اعتبارسنجی رمزهای عبور جدید در متد POST
+        if request.method == "POST":
+            new_password = request.POST.get("new_password", "")
+            confirm_password = request.POST.get("confirm_password", "")
+
+            if not new_password or not confirm_password:
+                messages.error(request, "لطفاً هر دو فیلد گذرواژه را تکمیل کنید.")
+            elif new_password != confirm_password:
+                messages.error(request, "گذرواژه جدید و تکرار آن یکسان نیستند.")
+            elif len(new_password) < 8:
+                messages.error(request, "گذرواژه مداری باید حداقل ۸ کاراکتر باشد.")
+            else:
+                # ۴. تغییر رمز، هش کردن در دیتابیس و باطل شدن خودکار توکن
+                user.set_password(new_password)
+                user.save()
+                messages.success(
+                    request,
+                    "گذرواژه با موفقیت تغییر کرد. اکنون می‌توانید وارد مدار شوید.",
+                )
+                if request.user.is_authenticated:
+                    return redirect("accounts:profile")
+                return redirect("accounts:login")
+    else:
+        validlink = False
+
+    # ۵. ارسال وضعیت معتبر بودن لینک به قالب HTML
+    return render(
+        request, "accounts/password_reset_confirm.html", {"validlink": validlink}
+    )

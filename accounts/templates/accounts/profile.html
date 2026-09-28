@@ -139,6 +139,41 @@
         </button>
       </form>
 
+      <!-- بخش امنیت و مدیریت گذرواژه -->
+      <div class="profile-security-card">
+        <div class="security-card-header">
+          <div class="security-header-info">
+            <span class="security-shield-icon">🛡️</span>
+            <div>
+              <h3>امنیت و گذرواژه مداری</h3>
+              <p>جهت حفظ امنیت حساب، پیوند تغییر گذرواژه به فرکانس ایمیل شما مخابره می‌شود</p>
+            </div>
+          </div>
+        </div>
+
+        {% if request.user.email %}
+        <form method="POST" action="{% url 'accounts:password_reset_request' %}">
+          {% csrf_token %}
+          <input type="hidden" name="email" value="{{ request.user.email }}" />
+          <div class="security-action-box">
+            <div class="security-email-pill">
+              <span class="pill-label">فرکانس ایمیل متصل:</span>
+              <span class="pill-value">{{ request.user.email }}</span>
+            </div>
+            <button type="submit" class="btn-security-reset">
+              <span>🔑</span>
+              <span>مخابره پیوند تغییر گذرواژه به ایمیل</span>
+            </button>
+          </div>
+        </form>
+        {% else %}
+        <div class="security-alert-box">
+          <span>⚠️</span>
+          <span>برای فعال‌سازی امکان تغییر گذرواژه، ابتدا آدرس ایمیل خود را در فرم بالا وارد کرده و ذخیره نمایید.</span>
+        </div>
+        {% endif %}
+      </div>
+
       <!-- بخش شبکه ارتباطات مداری (Followers & Following) -->
       <div class="orbit-network-section">
         <div class="orbit-network-title">

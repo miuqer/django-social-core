@@ -105,6 +105,115 @@ body.profile-page {
   margin-top: 3px;
 }
 
+/* بخش امنیت و تغییر گذرواژه در پروفایل */
+.profile-security-card {
+  margin-top: 24px;
+  padding: 18px 20px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.profile-security-card:hover {
+  border-color: var(--border-glow);
+}
+
+.security-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.security-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.security-shield-icon {
+  font-size: 1.6rem;
+}
+
+.security-header-info h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.security-header-info p {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.security-action-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.security-email-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+}
+
+.security-email-pill .pill-value {
+  color: var(--accent-primary);
+  font-weight: 700;
+  direction: ltr;
+}
+
+.btn-security-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.btn-security-reset:hover {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: var(--glow-strong);
+  transform: translateY(-1px);
+}
+
+.security-alert-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  font-size: 0.78rem;
+  color: #fca5a5;
+}
+
 /* بخش شبکه ارتباطی (Followers & Following) */
 .orbit-network-section {
   margin-top: 24px;
