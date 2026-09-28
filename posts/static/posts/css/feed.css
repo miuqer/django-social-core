@@ -1,0 +1,570 @@
+/* ==========================================================================
+   InstaOrbit - Main Feed & Layout Styling
+   ========================================================================== */
+
+.orbit-layout {
+  display: flex;
+  width: 100%;
+  max-width: 1240px;
+  min-height: 100vh;
+}
+
+/* سایدبار ناوبری ایستگاه (راست) */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-left: 1px solid var(--border-subtle);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--hull-panel);
+  backdrop-filter: blur(16px);
+  z-index: 50;
+}
+
+.brand-orbit {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 14px var(--accent-primary);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item a:hover {
+  color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-glow);
+  box-shadow: var(--glow-shadow);
+  transform: translateX(-3px);
+}
+
+.nav-item.active a {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-active);
+  box-shadow: var(--glow-shadow);
+  font-weight: 700;
+}
+
+.btn-nav-logout {
+  color: var(--accent-danger) !important;
+  border-color: rgba(244, 63, 94, 0.3) !important;
+}
+
+.btn-nav-logout:hover {
+  background: rgba(244, 63, 94, 0.12) !important;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.25) !important;
+}
+
+.btn-nav-login {
+  color: var(--accent-primary) !important;
+  border-color: var(--border-glow) !important;
+}
+
+/* فید مرکزی */
+.feed-container {
+  flex: 1;
+  max-width: 620px;
+  padding: 24px 16px;
+  margin: 0 auto;
+}
+
+/* پیام‌های سیستمی مخابره‌شده */
+.messages-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sys-msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  backdrop-filter: blur(12px);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sys-msg-success {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+}
+
+.sys-msg-error {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid var(--accent-danger);
+  color: #fecdd3;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.2);
+}
+
+/* نوار مخابره‌های زنده (استوری) */
+.stories-bar {
+  display: flex;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  backdrop-filter: blur(14px);
+}
+
+.stories-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.story-item:hover {
+  transform: translateY(-2px);
+}
+
+.story-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: var(--ring-gradient);
+  box-shadow: var(--glow-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.25s ease;
+}
+
+.story-item:hover .story-ring {
+  box-shadow: var(--glow-strong);
+}
+
+.story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--space-black);
+  background-color: var(--hull-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 1.25rem;
+}
+
+.story-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-username {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  max-width: 65px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* کارت کیهانی پست */
+.cosmic-card {
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cosmic-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: var(--glow-shadow);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.post-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-glow);
+}
+
+.avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-primary);
+  background-color: var(--hull-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 10px var(--border-subtle);
+}
+
+.avatar-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-username {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #fff;
+}
+
+.sector-tag {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.post-media {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #03040a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* افکت دابل‌کلیک لایک */
+.like-heart-burst {
+  position: absolute;
+  font-size: 5rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-shadow: 0 0 20px var(--accent-primary);
+}
+
+.like-heart-burst.animate {
+  opacity: 1;
+  transform: scale(1.3);
+}
+
+.telemetry-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px 8px 18px;
+}
+
+.telemetry-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-telemetry {
+  background: none;
+  border: none;
+  color: var(--text-glow);
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.btn-telemetry:hover {
+  transform: scale(1.18);
+  filter: drop-shadow(0 0 8px var(--accent-primary));
+}
+
+.btn-telemetry:active {
+  transform: scale(0.95);
+}
+
+.post-body {
+  padding: 0 18px 16px 18px;
+}
+
+.likes-count {
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: var(--accent-primary);
+  margin-bottom: 8px;
+}
+
+.caption-log {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.caption-user {
+  font-weight: 700;
+  color: #fff;
+  margin-left: 6px;
+}
+
+.stardate {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* استریم دیدگاه‌ها */
+.frequency-stream {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.frequency-msg {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  background: rgba(0, 0, 0, 0.22);
+  padding: 7px 12px;
+  border-radius: 8px;
+  border-right: 2px solid var(--accent-primary);
+}
+
+.sender-tag {
+  color: var(--accent-primary);
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.all-frequencies-link {
+  font-size: 0.75rem;
+  color: var(--accent-primary);
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 4px;
+  transition: opacity 0.2s ease;
+}
+
+.all-frequencies-link:hover {
+  opacity: 0.8;
+  text-shadow: 0 0 8px var(--accent-primary);
+}
+
+/* فرم ارسال سریع نظر */
+.frequency-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 12px;
+}
+
+.frequency-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 9px 14px;
+  color: #fff;
+  font-size: 0.82rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.frequency-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.btn-send-signal {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-send-signal:hover {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: var(--glow-strong);
+}
+
+/* سایدبار پروفایل سمت چپ */
+.sidebar-right {
+  width: 300px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 28px 18px;
+  display: none;
+  z-index: 50;
+}
+
+@media (min-width: 1050px) {
+  .sidebar-right {
+    display: block;
+  }
+}
+
+.current-user-card {
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.user-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-text h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.user-text span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.btn-manage {
+  color: var(--accent-primary);
+  font-size: 0.75rem;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.btn-manage:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  text-shadow: 0 0 8px var(--accent-primary);
+}
+
+/* واکنش‌گرایی موبایل و تبلت */
+@media (max-width: 768px) {
+  .orbit-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-left: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 16px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand-orbit {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .nav-item a {
+    padding: 6px 8px;
+    font-size: 0.78rem;
+  }
+
+  .feed-container {
+    padding: 16px 12px;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .theme-switcher-widget {
+    margin-top: 0;
+    padding: 6px 10px;
+  }
+}

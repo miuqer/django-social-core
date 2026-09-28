@@ -1,236 +1,62 @@
+{% load static %}
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="aurora">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>پایگاه هویتی فضانورد | نمایه مداری</title>
-    <style>
-      :root {
-        --space-black: #060814;
-        --hull-panel: rgba(16, 23, 48, 0.75);
-        --neon-cyan: #00f0ff;
-        --neon-magenta: #ff007f;
-        --text-glow: #e0f8ff;
-        --text-muted: #7b8ba5;
-        --border-glow: rgba(0, 240, 255, 0.25);
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      }
-      body {
-        background-color: var(--space-black);
-        color: var(--text-glow);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 30px 16px;
-        background-image:
-          radial-gradient(
-            1.5px 1.5px at 120px 80px,
-            var(--neon-cyan),
-            transparent
-          ),
-          radial-gradient(
-            2px 2px at 340px 120px,
-            var(--neon-magenta),
-            transparent
-          );
-        background-attachment: fixed;
-      }
-      .profile-card {
-        background: var(--hull-panel);
-        backdrop-filter: blur(18px);
-        border: 1px solid var(--border-glow);
-        border-radius: 20px;
-        width: 100%;
-        max-width: 520px;
-        padding: 32px 28px;
-        box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
-      }
-      .profile-header {
-        text-align: center;
-        margin-bottom: 24px;
-      }
-      .profile-header h2 {
-        color: #fff;
-        text-shadow: 0 0 10px var(--neon-cyan);
-        font-size: 1.3rem;
-        margin-bottom: 6px;
-      }
-      .profile-header p {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-      }
-
-      .avatar-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-      .avatar-preview {
-        width: 86px;
-        height: 86px;
-        border-radius: 50%;
-        border: 2px solid var(--neon-cyan);
-        box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        background: rgba(0, 240, 255, 0.05);
-        font-size: 2.2rem;
-        margin-bottom: 10px;
-      }
-      .avatar-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .avatar-label {
-        color: var(--neon-cyan);
-        font-size: 0.8rem;
-        cursor: pointer;
-        border: 1px dashed var(--neon-cyan);
-        padding: 4px 12px;
-        border-radius: 20px;
-        transition: 0.2s;
-      }
-      .avatar-label:hover {
-        background: rgba(0, 240, 255, 0.1);
-      }
-
-      .form-group {
-        margin-bottom: 14px;
-      }
-      .form-group label {
-        display: block;
-        font-size: 0.8rem;
-        margin-bottom: 6px;
-        color: var(--neon-cyan);
-      }
-      .form-group input,
-      .form-group textarea {
-        width: 100%;
-        padding: 10px 14px;
-        background: rgba(6, 8, 20, 0.8);
-        border: 1px solid var(--border-glow);
-        border-radius: 8px;
-        color: #fff;
-        outline: none;
-        font-size: 0.85rem;
-      }
-      .form-group input:focus,
-      .form-group textarea:focus {
-        border-color: var(--neon-cyan);
-        box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
-      }
-      .form-group input[readonly] {
-        background: rgba(255, 255, 255, 0.04);
-        color: var(--text-muted);
-        cursor: not-allowed;
-      }
-
-      .btn-submit {
-        width: 100%;
-        padding: 11px;
-        background: rgba(0, 240, 255, 0.18);
-        border: 1px solid var(--neon-cyan);
-        border-radius: 8px;
-        color: var(--neon-cyan);
-        font-weight: 700;
-        cursor: pointer;
-        margin-top: 10px;
-        transition: 0.2s;
-      }
-      .btn-submit:hover {
-        background: var(--neon-cyan);
-        color: #000;
-        box-shadow: 0 0 15px var(--neon-cyan);
-      }
-
-      .nav-links {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        padding-top: 14px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        font-size: 0.8rem;
-      }
-      .nav-links a {
-        color: var(--text-muted);
-        text-decoration: none;
-      }
-      .nav-links a:hover {
-        color: var(--neon-cyan);
-      }
-      .msg {
-        padding: 9px 12px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        margin-bottom: 14px;
-      }
-      .msg-error {
-        background: rgba(255, 0, 127, 0.15);
-        border: 1px solid var(--neon-magenta);
-        color: #ffb3d9;
-      }
-      .msg-success {
-        background: rgba(0, 240, 255, 0.15);
-        border: 1px solid var(--neon-cyan);
-        color: var(--text-glow);
-      }
-    </style>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'accounts/css/profile.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
   </head>
-  <body>
+  <body class="profile-page">
     <div class="profile-card">
       <div class="profile-header">
-        <h2>مرکز ویرایش داده‌های مداری</h2>
-        <p>شناسه و اطلاعات پایگاه کاربری خود را به‌روزرسانی کنید</p>
+        <h2>تنظیمات پایگاه هویتی</h2>
+        <p>مشخصات سیگنال و نمایه فضانوردی خود را ویرایش کنید</p>
       </div>
 
-      {% if messages %} {% for message in messages %}
-      <div
-        class="msg {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}"
-      >
-        {{ message }}
+      {% if messages %}
+      <div class="messages-stream">
+        {% for message in messages %}
+        <div class="sys-msg {% if message.tags == 'error' %}sys-msg-error{% else %}sys-msg-success{% endif %}">
+          <span>{% if message.tags == 'error' %}⚠️{% else %}🛰️{% endif %}</span>
+          <span>{{ message }}</span>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %} {% endif %}
+      {% endif %}
 
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
         <div class="avatar-box">
           <div class="avatar-preview">
             {% if request.user.profile.avatar %}
             <img
-              id="preview"
               src="{{ request.user.profile.avatar.url }}"
               alt="{{ request.user.username }}"
             />
-            {% else %}
-            <img id="preview" style="display: none" alt="پیش‌نمایش" />
-            <span id="default-icon">👨‍🚀</span>
-            {% endif %}
+            {% else %} 👨‍🚀 {% endif %}
           </div>
-          <label for="avatar" class="avatar-label">تغییر آواتار فضانورد</label>
+          <label for="avatar-input" class="avatar-label">
+            📷 تغییر تصویر آواتار
+          </label>
           <input
             type="file"
-            id="avatar"
+            id="avatar-input"
             name="avatar"
             accept="image/*"
             style="display: none"
-            onchange="previewImage(event)"
           />
         </div>
 
         <div class="form-group">
-          <label>شناسه کاربری (ثابت)</label>
+          <label>نام کاربری (غیرقابل تغییر)</label>
           <input type="text" value="{{ request.user.username }}" readonly />
         </div>
 
@@ -240,12 +66,22 @@
             type="text"
             name="full_name"
             value="{{ request.user.profile.full_name|default:'' }}"
-            placeholder="مثلاً: کاپیتان کیهانی"
+            placeholder="مثال: مهرداد صالحی"
           />
         </div>
 
         <div class="form-group">
-          <label>فرکانس ایمیل</label>
+          <label>فرکانس تماس (شماره تلفن)</label>
+          <input
+            type="text"
+            name="phone_number"
+            value="{{ request.user.phone_number }}"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>آدرس الکترونیکی (ایمیل)</label>
           <input
             type="email"
             name="email"
@@ -255,48 +91,25 @@
         </div>
 
         <div class="form-group">
-          <label>شماره تماس مداری</label>
-          <input
-            type="text"
-            name="phone_number"
-            value="{{ request.user.phone_number|default:'' }}"
-            placeholder="09123456789"
-          />
-        </div>
-
-        <div class="form-group">
-          <label>بیوگرافی مدار (درباره شما)</label>
+          <label>بیوگرافی مداری</label>
           <textarea
             name="bio"
-            rows="3"
-            placeholder="مختصری از موقعیت و ماموریت خود بنویسید..."
-          >
-{{ request.user.profile.bio|default:'' }}</textarea
-          >
+            placeholder="درباره ماموریت‌ها و علایق کیهانی خود بنویسید..."
+          >{{ request.user.profile.bio|default:'' }}</textarea>
         </div>
 
-        <button type="submit" class="btn-submit">ثبت تغییرات در مدار</button>
+        <button type="submit" class="btn-submit" style="width: 100%; padding: 12px; border-radius: 12px; background: var(--accent-primary); color: #000; font-weight: 800; border: none; cursor: pointer;">
+          ذخیره تغییرات پایگاه
+        </button>
       </form>
 
-      <div class="nav-links">
-        <a href="{% url 'posts:feed' %}">← بازگشت به فید مداری</a>
-        <a href="{% url 'accounts:logout' %}" style="color: var(--neon-magenta)"
-          >قطع نشست (خروج)</a
-        >
+      <div class="profile-nav-links">
+        <a href="{% url 'posts:feed' %}">← بازگشت به فید اصلی</a>
+        <a href="{% url 'accounts:logout' %}" style="color: var(--accent-danger);">خروج از حساب</a>
       </div>
     </div>
 
-    <script>
-      function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-          const preview = document.getElementById("preview");
-          const defaultIcon = document.getElementById("default-icon");
-          preview.src = URL.createObjectURL(file);
-          preview.style.display = "block";
-          if (defaultIcon) defaultIcon.style.display = "none";
-        }
-      }
-    </script>
+    <!-- اسکریپت پیش‌نمایش آنی آواتار -->
+    <script src="{% static 'accounts/js/profile.js' %}"></script>
   </body>
 </html>

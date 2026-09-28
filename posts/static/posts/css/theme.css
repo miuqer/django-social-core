@@ -1,0 +1,201 @@
+/* ==========================================================================
+   InstaOrbit - Global Theme System & Smooth Core Styling
+   ========================================================================== */
+
+/* 1. پالت زمردی شفق قطبی (Aurora Emerald) - پیش‌فرض */
+:root,
+[data-theme="aurora"] {
+  --space-black: #060f0c;
+  --space-surface: #0a1713;
+  --hull-panel: rgba(10, 25, 20, 0.78);
+  --hull-solid: #0e241c;
+  --accent-primary: #00f59b;
+  --accent-secondary: #06b6d4;
+  --accent-highlight: #84cc16;
+  --accent-danger: #f43f5e;
+  --text-glow: #e6fff4;
+  --text-muted: #6e9485;
+  --border-glow: rgba(0, 245, 155, 0.24);
+  --border-subtle: rgba(0, 245, 155, 0.1);
+  --border-active: #00f59b;
+  --glow-shadow: 0 0 24px rgba(0, 245, 155, 0.15);
+  --glow-strong: 0 0 16px rgba(0, 245, 155, 0.35);
+  --ring-gradient: linear-gradient(135deg, #00f59b, #06b6d4);
+  --bg-stars: radial-gradient(1.5px 1.5px at 80px 60px, #00f59b, transparent),
+              radial-gradient(2px 2px at 300px 140px, #06b6d4, transparent),
+              radial-gradient(1.5px 1.5px at 600px 320px, #ffffff, transparent);
+}
+
+/* 2. پالت شراره خورشیدی و کهربا (Solar Flare) */
+[data-theme="solar"] {
+  --space-black: #0d0a06;
+  --space-surface: #171109;
+  --hull-panel: rgba(26, 18, 10, 0.8);
+  --hull-solid: #26190d;
+  --accent-primary: #f97316;
+  --accent-secondary: #fbbf24;
+  --accent-highlight: #f59e0b;
+  --accent-danger: #ef4444;
+  --text-glow: #fff7ed;
+  --text-muted: #9a8470;
+  --border-glow: rgba(249, 115, 22, 0.24);
+  --border-subtle: rgba(249, 115, 22, 0.1);
+  --border-active: #f97316;
+  --glow-shadow: 0 0 24px rgba(249, 115, 22, 0.15);
+  --glow-strong: 0 0 16px rgba(249, 115, 22, 0.35);
+  --ring-gradient: linear-gradient(135deg, #f97316, #fbbf24);
+  --bg-stars: radial-gradient(1.5px 1.5px at 80px 60px, #f97316, transparent),
+              radial-gradient(2px 2px at 300px 140px, #fbbf24, transparent),
+              radial-gradient(1.5px 1.5px at 600px 320px, #ffffff, transparent);
+}
+
+/* 3. پالت اقیانوس کیهانی و پالس نئونی (Deep Ocean) */
+[data-theme="ocean"] {
+  --space-black: #050a14;
+  --space-surface: #0a1324;
+  --hull-panel: rgba(10, 20, 38, 0.8);
+  --hull-solid: #0d1a33;
+  --accent-primary: #00f2fe;
+  --accent-secondary: #0284c7;
+  --accent-highlight: #38bdf8;
+  --accent-danger: #f43f5e;
+  --text-glow: #e0f2fe;
+  --text-muted: #6482a6;
+  --border-glow: rgba(0, 242, 254, 0.24);
+  --border-subtle: rgba(0, 242, 254, 0.1);
+  --border-active: #00f2fe;
+  --glow-shadow: 0 0 24px rgba(0, 242, 254, 0.15);
+  --glow-strong: 0 0 16px rgba(0, 242, 254, 0.35);
+  --ring-gradient: linear-gradient(135deg, #00f2fe, #0284c7);
+  --bg-stars: radial-gradient(1.5px 1.5px at 80px 60px, #00f2fe, transparent),
+              radial-gradient(2px 2px at 300px 140px, #0284c7, transparent),
+              radial-gradient(1.5px 1.5px at 600px 320px, #ffffff, transparent);
+}
+
+/* 4. پالت غروب خورشیدی و کورال (Sunset Flare) */
+[data-theme="sunset"] {
+  --space-black: #0f070a;
+  --space-surface: #180b11;
+  --hull-panel: rgba(26, 12, 18, 0.8);
+  --hull-solid: #240f19;
+  --accent-primary: #f43f5e;
+  --accent-secondary: #fb923c;
+  --accent-highlight: #fda4af;
+  --accent-danger: #dc2626;
+  --text-glow: #fff1f2;
+  --text-muted: #9f707f;
+  --border-glow: rgba(244, 63, 94, 0.24);
+  --border-subtle: rgba(244, 63, 94, 0.1);
+  --border-active: #f43f5e;
+  --glow-shadow: 0 0 24px rgba(244, 63, 94, 0.15);
+  --glow-strong: 0 0 16px rgba(244, 63, 94, 0.35);
+  --ring-gradient: linear-gradient(135deg, #f43f5e, #fb923c);
+  --bg-stars: radial-gradient(1.5px 1.5px at 80px 60px, #f43f5e, transparent),
+              radial-gradient(2px 2px at 300px 140px, #fb923c, transparent),
+              radial-gradient(1.5px 1.5px at 600px 320px, #ffffff, transparent);
+}
+
+/* ==========================================================================
+   Universal Reset & Smooth Experience
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Vazirmatn FD", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.2s ease;
+}
+
+body {
+  background-color: var(--space-black);
+  color: var(--text-glow);
+  min-height: 100vh;
+  background-image: var(--bg-stars);
+  background-attachment: fixed;
+  background-repeat: repeat;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* اسکرول‌بار نرم و مدرن */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--space-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-glow);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* ویجت تعویض تم (Theme Switcher Widget) */
+.theme-switcher-widget {
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-top: 14px;
+  backdrop-filter: blur(14px);
+}
+
+.theme-switcher-title {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.theme-dots-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.theme-dot-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  background-clip: padding-box;
+}
+
+.theme-dot-btn:hover {
+  transform: scale(1.15);
+}
+
+.theme-dot-btn.active {
+  border-color: #ffffff;
+  transform: scale(1.2);
+  box-shadow: 0 0 10px currentColor;
+}
+
+.theme-dot-aurora {
+  background: linear-gradient(135deg, #00f59b, #06b6d4);
+  color: #00f59b;
+}
+
+.theme-dot-solar {
+  background: linear-gradient(135deg, #f97316, #fbbf24);
+  color: #f97316;
+}
+
+.theme-dot-ocean {
+  background: linear-gradient(135deg, #00f2fe, #0284c7);
+  color: #00f2fe;
+}
+
+.theme-dot-sunset {
+  background: linear-gradient(135deg, #f43f5e, #fb923c);
+  color: #f43f5e;
+}

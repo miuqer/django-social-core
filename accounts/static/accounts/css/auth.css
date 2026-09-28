@@ -1,0 +1,161 @@
+/* ==========================================================================
+   InstaOrbit - Authentication (Login & Register) Styling
+   ========================================================================== */
+
+body.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px;
+  min-height: 100vh;
+}
+
+.auth-card {
+  background: var(--hull-panel);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), var(--glow-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ring-gradient);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.auth-header .logo-icon {
+  font-size: 2.4rem;
+  margin-bottom: 10px;
+  display: inline-block;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.auth-header h2 {
+  color: #fff;
+  text-shadow: 0 0 12px var(--accent-primary);
+  margin-bottom: 6px;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.auth-header p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.input-box {
+  margin-bottom: 16px;
+}
+
+.input-box label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-glow);
+}
+
+.input-box input {
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-box input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.input-box input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.8rem;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 12px;
+  color: #000;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 10px;
+  box-shadow: var(--glow-shadow);
+}
+
+.btn-submit:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-strong);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.switch-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.switch-link a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 700;
+  margin-right: 4px;
+  transition: text-shadow 0.2s;
+}
+
+.switch-link a:hover {
+  text-shadow: 0 0 8px var(--accent-primary);
+  text-decoration: underline;
+}
+
+.auth-nav-home {
+  text-align: center;
+  margin-top: 14px;
+}
+
+.auth-nav-home a {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.auth-nav-home a:hover {
+  color: var(--accent-primary);
+}
