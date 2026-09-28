@@ -133,6 +133,38 @@
         margin: 0 auto;
       }
 
+      /* پیام‌های سیستمی مخابره‌شده */
+      .messages-stream {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .sys-msg {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 0.82rem;
+        backdrop-filter: blur(12px);
+      }
+
+      .sys-msg-success {
+        background: rgba(0, 240, 255, 0.12);
+        border: 1px solid var(--neon-cyan);
+        color: var(--neon-cyan);
+        box-shadow: 0 0 14px rgba(0, 240, 255, 0.2);
+      }
+
+      .sys-msg-error {
+        background: rgba(255, 0, 127, 0.12);
+        border: 1px solid var(--neon-magenta);
+        color: #ffb3d9;
+        box-shadow: 0 0 14px rgba(255, 0, 127, 0.2);
+      }
+
       /* نوار مخابره‌های زنده (استوری) */
       .stories-bar {
         display: flex;
@@ -193,6 +225,7 @@
         height: 100%;
         object-fit: cover;
       }
+
       .story-username {
         font-size: 0.72rem;
         color: var(--text-muted);
@@ -247,11 +280,13 @@
         height: 100%;
         object-fit: cover;
       }
+
       .post-username {
         font-weight: 700;
         font-size: 0.88rem;
         color: #fff;
       }
+
       .sector-tag {
         font-size: 0.72rem;
         color: var(--text-muted);
@@ -326,6 +361,7 @@
         color: #fff;
         margin-left: 6px;
       }
+
       .stardate {
         font-size: 0.7rem;
         color: var(--text-muted);
@@ -417,6 +453,9 @@
       /* سایدبار پروفایل سمت چپ */
       .sidebar-right {
         width: 300px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
         padding: 30px 18px;
         display: none;
       }
@@ -424,6 +463,48 @@
       @media (min-width: 1050px) {
         .sidebar-right {
           display: block;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .orbit-layout {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          border-left: none;
+          border-bottom: 1px solid var(--border-glow);
+          padding: 12px 16px;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .brand-orbit {
+          margin-bottom: 0;
+          font-size: 1.15rem;
+        }
+
+        .nav-links {
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .nav-item a {
+          padding: 6px 10px;
+          font-size: 0.8rem;
+        }
+
+        .feed-container {
+          padding: 16px 12px;
+          max-width: 100%;
+          width: 100%;
         }
       }
 
@@ -444,22 +525,26 @@
         align-items: center;
         gap: 12px;
       }
+
       .user-text h4 {
         font-size: 0.88rem;
         font-weight: 700;
         color: #fff;
       }
+
       .user-text span {
         font-size: 0.75rem;
         color: var(--text-muted);
         display: block;
       }
+
       .btn-manage {
         color: var(--neon-cyan);
         font-size: 0.75rem;
         text-decoration: none;
         font-weight: 700;
       }
+
       .btn-manage:hover {
         text-shadow: 0 0 8px var(--neon-cyan);
       }
@@ -482,14 +567,19 @@
             <li class="nav-item"><a href="#">🔍 اسکن و جستجو</a></li>
             <li class="nav-item"><a href="#">🧭 کاوش مداری</a></li>
             <li class="nav-item"><a href="#">💬 پیام‌های مستقیم</a></li>
-            <li class="nav-item"><a href="#">➕ مخابره پست جدید</a></li>
+            <li class="nav-item">
+              <a href="{% url 'admin:posts_post_add' %}">➕ مخابره پست جدید</a>
+            </li>
+            {% if request.user.is_authenticated %}
             <li class="nav-item">
               <a href="{% url 'accounts:profile' %}">👤 نمایه پایگاه</a>
             </li>
+            {% endif %}
           </ul>
         </div>
 
         <div class="nav-item">
+          {% if request.user.is_authenticated %}
           <a
             href="{% url 'accounts:logout' %}"
             style="
@@ -499,18 +589,41 @@
           >
             🚪 قطع نشست (خروج)
           </a>
+          {% else %}
+          <a
+            href="{% url 'accounts:login' %}"
+            style="
+              color: var(--neon-cyan);
+              border-color: var(--border-glow);
+            "
+          >
+            🚀 ورود به پایگاه
+          </a>
+          {% endif %}
         </div>
       </aside>
 
       <!-- فید مرکزی -->
       <main class="feed-container">
+        <!-- پیام‌های سیستمی ایستگاه -->
+        {% if messages %}
+        <div class="messages-stream">
+          {% for message in messages %}
+          <div class="sys-msg {% if message.tags == 'error' %}sys-msg-error{% else %}sys-msg-success{% endif %}">
+            <span>{% if message.tags == 'error' %}⚠️{% else %}🛰️{% endif %}</span>
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- نوار مخابره‌های زنده (Stories) -->
         <div class="stories-bar">
           <!-- استوری فضانورد لاگین‌شده -->
           <div class="story-item">
             <div class="story-ring">
               <div class="story-avatar">
-                {% if request.user.profile.avatar %}
+                {% if request.user.is_authenticated and request.user.profile.avatar %}
                 <img
                   src="{{ request.user.profile.avatar.url }}"
                   alt="{{ request.user.username }}"
@@ -518,7 +631,9 @@
                 {% else %} 👨‍🚀 {% endif %}
               </div>
             </div>
-            <span class="story-username">شما</span>
+            <span class="story-username">
+              {% if request.user.is_authenticated %}شما{% else %}میهمان{% endif %}
+            </span>
           </div>
 
           <!-- نمونه استوری سایر مدارها -->
@@ -546,7 +661,7 @@
         {% for post in posts %}
         <article class="cosmic-card">
           <header class="post-header">
-            <a href="#" class="post-user">
+            <a href="{% if post.author == request.user %}{% url 'accounts:profile' %}{% else %}#{% endif %}" class="post-user">
               <div class="avatar-small">
                 {% if post.author.profile.avatar %}
                 <img
@@ -598,15 +713,15 @@
               >
                 💬
               </a>
-              <button class="btn-telemetry" title="رله فرکانس (ارسال)">
+              <button type="button" class="btn-telemetry" title="رله فرکانس (ارسال)">
                 🚀
               </button>
             </div>
-            <button class="btn-telemetry" title="ذخیره در هسته">🔖</button>
+            <button type="button" class="btn-telemetry" title="ذخیره در هسته">🔖</button>
           </div>
 
           <div class="post-body">
-            <div class="likes-count">{{ post.likes.count }} تپش هسته</div>
+            <div class="likes-count">{{ post.total_likes }} تپش هسته</div>
 
             {% if post.caption %}
             <div class="caption-log">
@@ -621,7 +736,7 @@
 
             <!-- مخابره‌های دریافتی اخیر -->
             <div class="frequency-stream">
-              {% for comment in post.recent_comments %}
+              {% for comment in post.comments.all|slice:":3" %}
               <div class="frequency-msg">
                 <span class="sender-tag">{{ comment.author.username }}:</span>
                 <span>{{ comment.text }}</span>
@@ -630,12 +745,13 @@
               <span style="font-size: 0.72rem; color: var(--text-muted)">
                 هیچ سیگنالی برای این مخابره ثبت نشده است.
               </span>
-              {% endfor %} {% if post.comments.count > 3 %}
+              {% endfor %}
+              {% if post.comments.all|length > 3 %}
               <a
                 href="{% url 'interactions:post_comments_detail' post.id %}"
                 class="all-frequencies-link"
               >
-                مشاهده تمام مخابره‌ها ({{ post.comments.count }}) 🛰️
+                مشاهده تمام مخابره‌ها ({{ post.comments.all|length }}) 🛰️
               </a>
               {% endif %}
             </div>
@@ -673,6 +789,7 @@
 
       <!-- سایدبار هویتی سمت چپ -->
       <aside class="sidebar-right">
+        {% if request.user.is_authenticated %}
         <div class="current-user-card">
           <div class="user-meta">
             <div class="avatar-small">
@@ -685,14 +802,26 @@
             </div>
             <div class="user-text">
               <h4>{{ request.user.username }}</h4>
-              <span
-                >{{ request.user.profile.full_name|default:"فضانورد بدون نام"
-                }}</span
-              >
+              <span>{{ request.user.profile.full_name|default:"فضانورد بدون نام" }}</span>
             </div>
           </div>
           <a href="{% url 'accounts:profile' %}" class="btn-manage">تنظیمات</a>
         </div>
+        {% else %}
+        <div class="current-user-card">
+          <div class="user-meta">
+            <div class="avatar-small">👨‍🚀</div>
+            <div class="user-text">
+              <h4>فضانورد مهمان</h4>
+              <span style="font-size: 0.72rem; color: var(--text-muted)">به مدار خوش آمدید</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <a href="{% url 'accounts:login' %}" class="btn-manage">ورود</a>
+            <a href="{% url 'accounts:register' %}" class="btn-manage" style="color: var(--neon-magenta)">عضویت</a>
+          </div>
+        </div>
+        {% endif %}
       </aside>
     </div>
   </body>
