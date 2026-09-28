@@ -10,6 +10,7 @@ def show_post(request):
         Post.objects.select_related("author")
         .annotate(total_likes=Count("likes"))
         .prefetch_related("comments__author")
+        .order_by("-created_at")
         .all()
     )
 
