@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مخابره‌های مدار #{{ post.id }} | فرکانس کامل</title>
+    <style>
+      :root {
+        --space-black: #060814;
+        --hull-panel: rgba(16, 23, 48, 0.75);
+        --neon-cyan: #00f0ff;
+        --neon-magenta: #ff007f;
+        --text-glow: #e0f8ff;
+        --text-muted: #7b8ba5;
+        --border-glow: rgba(0, 240, 255, 0.25);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      body {
+        background-color: var(--space-black);
+        color: var(--text-glow);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 30px 16px;
+      }
+      .comments-container {
+        width: 100%;
+        max-width: 520px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 18px;
+        background: var(--hull-panel);
+        border: 1px solid var(--border-glow);
+        border-radius: 14px;
+      }
+      .nav-bar a {
+        color: var(--neon-cyan);
+        text-decoration: none;
+        font-size: 0.85rem;
+      }
+      .stream-card {
+        background: var(--hull-panel);
+        border: 1px solid var(--border-glow);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .msg-bubble {
+        background: rgba(0, 0, 0, 0.35);
+        border-right: 2px solid var(--neon-cyan);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+      .msg-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+      }
+      .sender-tag {
+        color: var(--neon-cyan);
+        font-weight: 700;
+      }
+      .msg-date {
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="comments-container">
+      <div class="nav-bar">
+        <a href="{% url 'posts:feed' %}">← بازگشت به ایستگاه مداری</a>
+        <span style="font-size: 0.8rem; color: var(--text-muted)"
+          >بخش #{{ post.id }}</span
+        >
+      </div>
+
+      <div class="stream-card">
+        <h3
+          style="
+            color: var(--neon-cyan);
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 8px;
+          "
+        >
+          تمام مخابره‌های دریافتی ({{ comments.count }})
+        </h3>
+
+        {% for comment in comments %}
+        <div class="msg-bubble">
+          <div class="msg-header">
+            <span class="sender-tag">{{ comment.author.username }}</span>
+            <span class="msg-date"
+              >{{ comment.created_at|date:"Y-m-d // H:i" }}</span
+            >
+          </div>
+          <div>{{ comment.text }}</div>
+        </div>
+        {% empty %}
+        <p
+          style="
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+          "
+        >
+          هیچ پیامی ثبت نشده است.
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
