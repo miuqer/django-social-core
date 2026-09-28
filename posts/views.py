@@ -16,15 +16,3 @@ def show_post(request):
         "posts": posts,
     }
     return render(request, "posts/index.html", context)
-
-
-def post_comments_detail(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    # واکشی تمام کامنت‌ها همراه با نویسنده در ۱ کوئری
-    all_comments = post.comments.select_related("author").all()
-
-    context = {
-        "post": post,
-        "comments": all_comments,
-    }
-    return render(request, "interactions/post_comments.html", context)
