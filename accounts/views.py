@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render
-from .models import MyUser, Profile
+from django.shortcuts import redirect, render, get_object_or_404
+from .models import MyUser, Profile, Follow
 
 
 def register_view(request):
@@ -159,3 +159,40 @@ def profile_view(request):
 
     # ۴. در درخواست GET صرفاً صفحه پروفایل نمایش داده می‌شود
     return render(request, "accounts/profile.html")
+
+
+def toggle_follow(request, user_id):
+    # ۱. بررسی احراز هویت
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
+
+    # ۲. واکشی کاربر هدف
+    target_user = get_object_or_404(MyUser, id=user_id)
+
+    # ۳. جلوگیری از فالو کردن خود
+    if request.user == target_user:
+        messages.error(request, "شما نمی‌توانید مدار خود را دنبال کنید!")
+        return redirect(request.META.get("HTTP_REFERER", "posts:feed"))
+
+    # ۴. وضعیت رابطه و اجرای Toggle
+    target = Follow.objects.filter(follower=request.user, following=target_user)
+    if target.exists():
+        target.delete()
+        messages.success(request, f"ارتباط شما با مدار {target_user.username} قطع شد.")
+    else:
+        Follow.objects.create(follower=request.user, following=target_user)
+        messages.success(
+            request, f"شما اکنون در مدار {target_user.username} قرار دارید."
+        )
+
+    # ۵. بازگشت به صفحه قبلی
+    return redirect(request.META.get("HTTP_REFERER", "posts:feed"))
+
+
+def password_reset_request_view(request):
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
+    if request.method == "POST":
+        email_input = request.POST.get("email")
+    if not email_input:
+        messages.error(request, "لطفا ایمیل خود را وارد کنید")

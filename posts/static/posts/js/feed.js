@@ -46,4 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  // ۳. مدیریت دکمه‌های اتصال به مدار (Follow / Unfollow)
+  const followingIds = Array.isArray(window.currentFollowingIds) ? window.currentFollowingIds : [];
+  document.querySelectorAll('.btn-orbit-follow').forEach(btn => {
+    const targetUserId = parseInt(btn.dataset.targetUserId, 10);
+    const isFollowing = followingIds.includes(targetUserId);
+
+    if (isFollowing) {
+      btn.classList.add('following');
+      btn.innerHTML = '<span class="follow-icon">✓</span><span class="follow-label">در مدار</span>';
+      btn.setAttribute('title', 'کلیک برای قطع ارتباط مداری');
+    } else {
+      btn.classList.remove('following');
+      btn.innerHTML = '<span class="follow-icon">+</span><span class="follow-label">اتصال به مدار</span>';
+      btn.setAttribute('title', 'دنبال کردن این مدار');
+    }
+
+    // افکت هاور برای دکمه‌هایی که در مدار هستند
+    btn.addEventListener('mouseenter', () => {
+      if (btn.classList.contains('following')) {
+        btn.innerHTML = '<span class="follow-icon">✕</span><span class="follow-label">قطع ارتباط</span>';
+      }
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      if (btn.classList.contains('following')) {
+        btn.innerHTML = '<span class="follow-icon">✓</span><span class="follow-label">در مدار</span>';
+      }
+    });
+  });
 });

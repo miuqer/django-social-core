@@ -16,7 +16,7 @@ body.profile-page {
   border: 1px solid var(--border-subtle);
   border-radius: 24px;
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   padding: 36px 30px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), var(--glow-shadow);
   position: relative;
@@ -76,28 +76,193 @@ body.profile-page {
 .profile-stats-row {
   display: flex;
   justify-content: space-around;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 12px;
+  border-radius: 16px;
+  padding: 14px 10px;
   margin-bottom: 22px;
 }
 
 .stat-item {
   text-align: center;
+  flex: 1;
+}
+
+.stat-item:not(:last-child) {
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .stat-val {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--accent-primary);
 }
 
 .stat-label {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 3px;
+}
+
+/* بخش شبکه ارتباطی (Followers & Following) */
+.orbit-network-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.orbit-network-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orbit-tabs-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.orbit-tab-btn {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.orbit-tab-btn.active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-primary);
+  color: #fff;
+  box-shadow: var(--glow-shadow);
+}
+
+.orbit-tab-badge {
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border-radius: 8px;
+  background: var(--hull-solid);
+  color: var(--accent-primary);
+}
+
+.orbit-tab-content {
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 2px;
+}
+
+.network-user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.network-user-item:hover {
+  border-color: var(--border-glow);
+  transform: translateX(-2px);
+}
+
+.network-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar-tiny {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-primary);
+  background: var(--hull-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 1rem;
+}
+
+.avatar-tiny img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.network-user-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.network-user-sub {
   font-size: 0.72rem;
   color: var(--text-muted);
   display: block;
-  margin-top: 2px;
+}
+
+.btn-network-action {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-network-unfollow {
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  color: #fecdd3;
+}
+
+.btn-network-unfollow:hover {
+  background: var(--accent-danger);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.4);
+}
+
+.btn-network-follow {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.btn-network-follow:hover {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: var(--glow-shadow);
+}
+
+.network-empty {
+  text-align: center;
+  padding: 24px 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .avatar-box {
@@ -199,7 +364,7 @@ body.profile-page {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 22px;
+  margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.82rem;

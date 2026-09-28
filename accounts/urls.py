@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login_view, logout_view, profile_view, register_view
+from .views import login_view, logout_view, profile_view, register_view, toggle_follow
 
 app_name = "accounts"
 
@@ -8,4 +8,5 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("profile/", profile_view, name="profile"),
+    path("follow/<int:user_id>/", toggle_follow, name="toggle_follow"),
 ]

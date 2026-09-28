@@ -236,3 +236,42 @@ body.comments-page {
   transform: translateY(-2px);
   box-shadow: var(--glow-strong);
 }
+
+/* دکمه اتصال مداری در کارت خلاصه پست */
+.btn-orbit-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn-orbit-follow:hover {
+  background: var(--accent-primary);
+  color: #03040a;
+  box-shadow: var(--glow-strong);
+  transform: translateY(-1px);
+}
+
+.btn-orbit-follow.following {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.btn-orbit-follow.following:hover {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.45);
+  color: #fca5a5;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+}

@@ -14,6 +14,13 @@
     <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
     <link rel="stylesheet" href="{% static 'posts/css/feed.css' %}" />
     <script src="{% static 'posts/js/theme.js' %}"></script>
+    <script>
+      {% if request.user.is_authenticated %}
+      window.currentFollowingIds = [{% for rel in request.user.following_relations.all %}{{ rel.following.id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      {% else %}
+      window.currentFollowingIds = [];
+      {% endif %}
+    </script>
   </head>
   <body>
     <div class="orbit-layout">
@@ -162,7 +169,19 @@
                 <span class="sector-tag">بخش مداری #{{ post.id }}</span>
               </div>
             </a>
-            <span style="color: var(--text-muted); cursor: pointer">•••</span>
+            <div class="post-header-actions">
+              {% if request.user.is_authenticated and post.author != request.user %}
+              <a
+                href="{% url 'accounts:toggle_follow' post.author.id %}"
+                class="btn-orbit-follow"
+                data-target-user-id="{{ post.author.id }}"
+              >
+                <span class="follow-icon">+</span>
+                <span class="follow-label">اتصال به مدار</span>
+              </a>
+              {% endif %}
+              <span class="post-more-btn" title="گزینه‌ها">•••</span>
+            </div>
           </header>
 
           <div class="post-media">
@@ -276,34 +295,98 @@
       <aside class="sidebar-right">
         {% if request.user.is_authenticated %}
         <div class="current-user-card">
-          <div class="user-meta">
-            <div class="avatar-small">
-              {% if request.user.profile.avatar %}
-              <img
-                src="{{ request.user.profile.avatar.url }}"
-                alt="{{ request.user.username }}"
-              />
-              {% else %} 👨‍🚀 {% endif %}
+          <div class="user-card-top">
+            <div class="user-meta">
+              <div class="avatar-small">
+                {% if request.user.profile.avatar %}
+                <img
+                  src="{{ request.user.profile.avatar.url }}"
+                  alt="{{ request.user.username }}"
+                />
+                {% else %} 👨‍🚀 {% endif %}
+              </div>
+              <div class="user-text">
+                <h4>{{ request.user.username }}</h4>
+                <span>{{ request.user.profile.full_name|default:"فضانورد بدون نام" }}</span>
+              </div>
             </div>
-            <div class="user-text">
-              <h4>{{ request.user.username }}</h4>
-              <span>{{ request.user.profile.full_name|default:"فضانورد بدون نام" }}</span>
-            </div>
+            <a href="{% url 'accounts:profile' %}" class="btn-manage">تنظیمات</a>
           </div>
-          <a href="{% url 'accounts:profile' %}" class="btn-manage">تنظیمات</a>
+
+          <!-- آمار سریع فضانورد -->
+          <div class="user-quick-stats">
+            <div class="quick-stat">
+              <span class="stat-number">{{ request.user.posts.count }}</span>
+              <span class="stat-caption">پست</span>
+            </div>
+            <a href="{% url 'accounts:profile' %}" class="quick-stat">
+              <span class="stat-number">{{ request.user.follower_relations.count }}</span>
+              <span class="stat-caption">دنبال‌کننده</span>
+            </a>
+            <a href="{% url 'accounts:profile' %}" class="quick-stat">
+              <span class="stat-number">{{ request.user.following_relations.count }}</span>
+              <span class="stat-caption">دنبال‌شونده</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ویجت مدارهای متصل فعال (دنبال‌شوندگان) -->
+        <div class="connections-card">
+          <div class="connections-card-header">
+            <h5>🛰️ مدارهای متصل شما</h5>
+            <span class="connections-badge">{{ request.user.following_relations.count }}</span>
+          </div>
+
+          <div class="connections-list">
+            {% for rel in request.user.following_relations.all|slice:":6" %}
+            <div class="connection-user-item">
+              <div class="connection-user-info">
+                <div class="avatar-tiny">
+                  {% if rel.following.profile.avatar %}
+                  <img src="{{ rel.following.profile.avatar.url }}" alt="{{ rel.following.username }}" />
+                  {% else %} 👨‍🚀 {% endif %}
+                </div>
+                <div class="connection-user-names">
+                  <span class="connection-username">{{ rel.following.username }}</span>
+                  <span class="connection-fullname">{{ rel.following.profile.full_name|default:"فضانورد مداری" }}</span>
+                </div>
+              </div>
+              <a
+                href="{% url 'accounts:toggle_follow' rel.following.id %}"
+                class="btn-mini-unfollow"
+                title="قطع ارتباط با {{ rel.following.username }}"
+              >
+                ✕
+              </a>
+            </div>
+            {% empty %}
+            <div class="connections-empty">
+              <span>🌌</span>
+              <span>هنوز به مداری متصل نشده‌اید.</span>
+            </div>
+            {% endfor %}
+          </div>
+
+          {% if request.user.following_relations.count > 6 %}
+          <a href="{% url 'accounts:profile' %}" class="connections-view-all">
+            مشاهده تمام مدارهای متصل ({{ request.user.following_relations.count }}) →
+          </a>
+          {% endif %}
         </div>
         {% else %}
         <div class="current-user-card">
-          <div class="user-meta">
-            <div class="avatar-small">👨‍🚀</div>
-            <div class="user-text">
-              <h4>فضانورد مهمان</h4>
-              <span style="font-size: 0.72rem; color: var(--text-muted)">به مدار خوش آمدید</span>
+          <div class="user-card-top">
+            <div class="user-meta">
+              <div class="avatar-small">👨‍🚀</div>
+              <div class="user-text">
+                <h4>فضانورد مهمان</h4>
+                <span style="font-size: 0.72rem; color: var(--text-muted)">به مدار خوش آمدید</span>
+              </div>
             </div>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <a href="{% url 'accounts:login' %}" class="btn-manage">ورود</a>
-            <a href="{% url 'accounts:register' %}" class="btn-manage" style="color: var(--accent-secondary)">عضویت</a>
+            <div style="display: flex; gap: 8px;">
+              <a href="{% url 'accounts:login' %}" class="btn-manage">ورود</a>
+              <a href="{% url 'accounts:register' %}" class="btn-manage" style="color: var(--accent-secondary)">عضویت</a>
+            </div>
           </div>
         </div>
         {% endif %}

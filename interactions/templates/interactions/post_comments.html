@@ -13,6 +13,13 @@
     <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
     <link rel="stylesheet" href="{% static 'interactions/css/comments.css' %}" />
     <script src="{% static 'posts/js/theme.js' %}"></script>
+    <script>
+      {% if request.user.is_authenticated %}
+      window.currentFollowingIds = [{% for rel in request.user.following_relations.all %}{{ rel.following.id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      {% else %}
+      window.currentFollowingIds = [];
+      {% endif %}
+    </script>
   </head>
   <body class="comments-page">
     <div class="comments-container">
@@ -54,6 +61,18 @@
           <p class="post-summary-caption" style="font-style: italic;">[بدون توضیح]</p>
           {% endif %}
         </div>
+        {% if request.user.is_authenticated and post.author != request.user %}
+        <div class="post-summary-actions">
+          <a
+            href="{% url 'accounts:toggle_follow' post.author.id %}"
+            class="btn-orbit-follow"
+            data-target-user-id="{{ post.author.id }}"
+          >
+            <span class="follow-icon">+</span>
+            <span class="follow-label">اتصال به مدار</span>
+          </a>
+        </div>
+        {% endif %}
       </div>
 
       <!-- پیام‌های سیستمی -->
@@ -122,5 +141,8 @@
         </form>
       </div>
     </div>
+
+    <!-- تعاملات مداری و دکمه اتصال -->
+    <script src="{% static 'posts/js/feed.js' %}"></script>
   </body>
 </html>

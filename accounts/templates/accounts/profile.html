@@ -13,6 +13,13 @@
     <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
     <link rel="stylesheet" href="{% static 'accounts/css/profile.css' %}" />
     <script src="{% static 'posts/js/theme.js' %}"></script>
+    <script>
+      {% if request.user.is_authenticated %}
+      window.currentFollowingIds = [{% for rel in request.user.following_relations.all %}{{ rel.following.id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      {% else %}
+      window.currentFollowingIds = [];
+      {% endif %}
+    </script>
   </head>
   <body class="profile-page">
     <div class="profile-card">
@@ -34,21 +41,19 @@
         <p>مشخصات سیگنال و نمایه فضانوردی خود را ویرایش کنید</p>
       </div>
 
-      <!-- آمار کوتاه فضانورد -->
+      <!-- آمار کوتاه فضانورد: پست‌ها، دنبال‌کنندگان و دنبال‌شوندگان -->
       <div class="profile-stats-row">
         <div class="stat-item">
           <span class="stat-val">{{ request.user.posts.count }}</span>
           <span class="stat-label">مخابره پست</span>
         </div>
         <div class="stat-item">
-          <span class="stat-val" style="color: var(--accent-secondary);">
-            {% if request.user.is_admin %}فرمانده{% else %}فضانورد{% endif %}
-          </span>
-          <span class="stat-label">سطح مدار</span>
+          <span class="stat-val">{{ request.user.follower_relations.count }}</span>
+          <span class="stat-label">دنبال‌کننده</span>
         </div>
         <div class="stat-item">
-          <span class="stat-val">فعال 🛰️</span>
-          <span class="stat-label">وضعیت فرکانس</span>
+          <span class="stat-val">{{ request.user.following_relations.count }}</span>
+          <span class="stat-label">دنبال‌شونده</span>
         </div>
       </div>
 
@@ -134,13 +139,88 @@
         </button>
       </form>
 
+      <!-- بخش شبکه ارتباطات مداری (Followers & Following) -->
+      <div class="orbit-network-section">
+        <div class="orbit-network-title">
+          <span>📡</span>
+          <span>شبکه ارتباطات مداری</span>
+        </div>
+
+        <div class="orbit-tabs-header">
+          <button type="button" class="orbit-tab-btn active" data-target="followers">
+            <span>دنبال‌کنندگان</span>
+            <span class="orbit-tab-badge">{{ request.user.follower_relations.count }}</span>
+          </button>
+          <button type="button" class="orbit-tab-btn" data-target="following">
+            <span>دنبال‌شوندگان</span>
+            <span class="orbit-tab-badge">{{ request.user.following_relations.count }}</span>
+          </button>
+        </div>
+
+        <!-- تب دنبال‌کنندگان -->
+        <div class="orbit-tab-content" id="tab-followers">
+          {% for rel in request.user.follower_relations.all %}
+          <div class="network-user-item">
+            <div class="network-user-info">
+              <div class="avatar-tiny">
+                {% if rel.follower.profile.avatar %}
+                <img src="{{ rel.follower.profile.avatar.url }}" alt="{{ rel.follower.username }}" />
+                {% else %} 👨‍🚀 {% endif %}
+              </div>
+              <div>
+                <div class="network-user-name">{{ rel.follower.username }}</div>
+                <span class="network-user-sub">{{ rel.follower.profile.full_name|default:"فضانورد بدون نام" }}</span>
+              </div>
+            </div>
+            <a
+              href="{% url 'accounts:toggle_follow' rel.follower.id %}"
+              class="btn-network-action btn-network-follow"
+              data-target-user-id="{{ rel.follower.id }}"
+            >
+              اتصال
+            </a>
+          </div>
+          {% empty %}
+          <div class="network-empty">
+            🛰️ هنوز هیچ فضانوردی به مدار شما متصل نشده است.
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- تب دنبال‌شوندگان -->
+        <div class="orbit-tab-content" id="tab-following" style="display: none;">
+          {% for rel in request.user.following_relations.all %}
+          <div class="network-user-item">
+            <div class="network-user-info">
+              <div class="avatar-tiny">
+                {% if rel.following.profile.avatar %}
+                <img src="{{ rel.following.profile.avatar.url }}" alt="{{ rel.following.username }}" />
+                {% else %} 👨‍🚀 {% endif %}
+              </div>
+              <div>
+                <div class="network-user-name">{{ rel.following.username }}</div>
+                <span class="network-user-sub">{{ rel.following.profile.full_name|default:"فضانورد بدون نام" }}</span>
+              </div>
+            </div>
+            <a href="{% url 'accounts:toggle_follow' rel.following.id %}" class="btn-network-action btn-network-unfollow">
+              قطع ارتباط
+            </a>
+          </div>
+          {% empty %}
+          <div class="network-empty">
+            🛰️ هنوز ارتباطی با سایر مدارها برقرار نکرده‌اید.
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
       <div class="profile-nav-links">
         <a href="{% url 'posts:feed' %}">← فید اصلی</a>
         <a href="{% url 'accounts:logout' %}" style="color: var(--accent-danger);">خروج از حساب</a>
       </div>
     </div>
 
-    <!-- اسکریپت پیش‌نمایش آنی آواتار -->
+    <!-- اسکریپت پیش‌نمایش آنی آواتار و تب‌های شبکه -->
     <script src="{% static 'accounts/js/profile.js' %}"></script>
   </body>
 </html>
