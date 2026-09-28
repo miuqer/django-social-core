@@ -1,0 +1,301 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="aurora">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پیام‌های مستقیم مداری | InstaOrbit</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'direct/css/direct.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
+  </head>
+  <body>
+    <!-- متادیتای چت برای اتصال وب‌سوکت -->
+    <div
+      id="chat-metadata"
+      data-room-id="{% if room %}{{ room.id }}{% endif %}"
+      data-user-id="{{ request.user.id }}"
+      data-username="{{ request.user.username }}"
+      data-user-avatar="{% if request.user.profile.avatar %}{{ request.user.profile.avatar.url }}{% endif %}"
+      style="display: none;"
+    ></div>
+
+    <div class="direct-page-layout">
+      <!-- ۱. نوار ناوبری فوق‌باریک مداری (سمت راست) -->
+      <aside class="direct-nav-rail">
+        <div class="rail-top">
+          <a href="{% url 'posts:feed' %}" class="rail-brand" title="پایگاه اصلی InstaOrbit">🛰️</a>
+          <div class="rail-links">
+            <a href="{% url 'posts:feed' %}" class="rail-btn" title="فید اصلی">🏠</a>
+            <a href="{% url 'direct:inbox' %}" class="rail-btn active" title="پیام‌های مستقیم">💬</a>
+            <a href="{% url 'posts:create_post' %}" class="rail-btn" title="مخابره پست جدید">➕</a>
+            <a href="{% url 'accounts:profile' %}" class="rail-btn" title="نمایه هویتی">👤</a>
+          </div>
+        </div>
+
+        <!-- انتخابگر سریع تم در ریل ناوبری -->
+        <div class="rail-theme-dots">
+          <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="اورورا"></button>
+          <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="سولار"></button>
+          <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="اقیانوس"></button>
+          <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="غروب"></button>
+        </div>
+
+        <div class="rail-bottom">
+          <a href="{% url 'accounts:logout' %}" class="rail-btn" title="خروج از نشست">🚪</a>
+        </div>
+      </aside>
+
+      <!-- ۲. سایدبار مکالمات و مخاطبین -->
+      <aside class="direct-conversations-sidebar {% if room %}hidden-mobile{% endif %}" id="conversations-sidebar">
+        <div class="conversations-header">
+          <div class="conversations-title-row">
+            <h2>
+              <span>💬</span>
+              <span>مکالمات مداری</span>
+            </h2>
+            <span class="conversations-count-badge">{{ user_rooms.count }}</span>
+          </div>
+
+          <div class="conversations-search">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="conv-search-input"
+              placeholder="جستجو در گفتگوها..."
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <!-- نوار مخاطبین سریع (فضانوردان متصل به مدار) -->
+        {% if request.user.following_relations.exists %}
+        <div class="quick-orbits-bar">
+          {% for rel in request.user.following_relations.all|slice:":12" %}
+          <a
+            href="{% url 'direct:start_chat' rel.following.id %}"
+            class="quick-orbit-item"
+            title="مخابره مستقیم به {{ rel.following.username }}"
+          >
+            <div class="quick-orbit-avatar">
+              {% if rel.following.profile.avatar %}
+              <img src="{{ rel.following.profile.avatar.url }}" alt="{{ rel.following.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
+            </div>
+            <span class="quick-orbit-name">{{ rel.following.username }}</span>
+          </a>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- لیست کارت‌های گفتگو -->
+        <div class="conversations-list" id="conversations-list">
+          {% for user_room in user_rooms %}
+            {% for u in user_room.users.all %}
+              {% if u.id != request.user.id %}
+              <a
+                href="{% url 'direct:chat_room' user_room.id %}"
+                class="conversation-card {% if room and room.id == user_room.id %}active{% endif %}"
+                data-room-id="{{ user_room.id }}"
+                data-username="{{ u.username|lower }}"
+                data-fullname="{{ u.profile.full_name|default:''|lower }}"
+              >
+                <div class="conv-avatar-wrap">
+                  <div class="conv-avatar">
+                    {% if u.profile.avatar %}
+                    <img src="{{ u.profile.avatar.url }}" alt="{{ u.username }}" />
+                    {% else %}
+                    👨‍🚀
+                    {% endif %}
+                  </div>
+                  <span class="conv-status-dot"></span>
+                </div>
+
+                <div class="conv-info">
+                  <div class="conv-top-row">
+                    <span class="conv-username">{{ u.username }}</span>
+                    <span class="conv-time">
+                      {% with last_msg=user_room.messages.last %}
+                      {% if last_msg %}{{ last_msg.created_at|date:"H:i" }}{% endif %}
+                      {% endwith %}
+                    </span>
+                  </div>
+
+                  <div class="conv-snippet-row">
+                    <span class="conv-snippet">
+                      {% with last_msg=user_room.messages.last %}
+                      {% if last_msg %}
+                      {{ last_msg.text|truncatechars:26 }}
+                      {% else %}
+                      کانال آماده مخابره
+                      {% endif %}
+                      {% endwith %}
+                    </span>
+                    {% with last_msg=user_room.messages.last %}
+                    {% if last_msg and not last_msg.has_seen and last_msg.sender != request.user %}
+                    <span class="conv-unread-badge">جدید</span>
+                    {% endif %}
+                    {% endwith %}
+                  </div>
+                </div>
+              </a>
+              {% endif %}
+            {% endfor %}
+          {% empty %}
+          <div class="conversations-empty">
+            <span style="font-size: 2.2rem;">🌌</span>
+            <span>هنوز هیچ مکالمه مداری برقرار نشده است.</span>
+            <span style="font-size: 0.72rem; opacity: 0.7;">از نوار بالا فضانوردی را جهت شروع گفتگو انتخاب کنید.</span>
+          </div>
+          {% endfor %}
+
+          <!-- اعلان عدم یافت نتیجه جستجو -->
+          <div id="search-no-results" class="conversations-empty" style="display: none;">
+            <span style="font-size: 1.8rem;">🔍</span>
+            <span>مکالمه‌ای با این مشخصات یافت نشد.</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ۳. فضای اصلی مخابره و جریان چت -->
+      <main class="direct-chat-main {% if not room %}hidden-mobile{% endif %}" id="chat-main">
+        {% if room %}
+        <!-- هدر چت فعال -->
+        <header class="chat-main-header">
+          <div class="chat-partner-info">
+            <button
+              type="button"
+              class="btn-mobile-back"
+              id="btn-mobile-back"
+              title="بازگشت به فهرست گفتگوها"
+            >
+              ➔
+            </button>
+
+            <div class="partner-avatar">
+              {% if other_user and other_user.profile.avatar %}
+              <img src="{{ other_user.profile.avatar.url }}" alt="{{ other_user.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
+            </div>
+
+            <div class="partner-names">
+              <h3>{{ other_user.username|default:"اتاق مداری" }}</h3>
+              <div class="partner-status" id="ws-status-badge">
+                <span class="status-pulse-dot"></span>
+                <span class="status-text">سیگنال برقرار</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-header-actions">
+            {% if other_user %}
+            <a
+              href="{% url 'accounts:toggle_follow' other_user.id %}"
+              class="btn-chat-action"
+              title="تغییر وضعیت دنبال‌کردن"
+            >
+              🛰️
+            </a>
+            {% endif %}
+            <button
+              type="button"
+              class="btn-chat-action"
+              id="btn-toggle-sound"
+              title="روشن/خاموش کردن صدای سینتی‌سایزر"
+            >
+              🔔
+            </button>
+            <a href="{% url 'posts:feed' %}" class="btn-chat-action" title="بازگشت به فید">
+              ✕
+            </a>
+          </div>
+        </header>
+
+        <!-- استریم پیام‌ها -->
+        <div class="chat-stream-container" id="chat-stream">
+          <div class="chat-security-banner">
+            <span>🛡️</span>
+            <span>کانال ارتباطی مداری فعال و ایمن است</span>
+          </div>
+
+          {% for msg in messages %}
+          <div class="msg-row {% if msg.sender.id == request.user.id %}outgoing{% else %}incoming{% endif %}">
+            <div class="msg-avatar">
+              {% if msg.sender.profile.avatar %}
+              <img src="{{ msg.sender.profile.avatar.url }}" alt="{{ msg.sender.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
+            </div>
+
+            <div class="msg-bubble">
+              <div class="msg-sender-name">{{ msg.sender.username }}</div>
+              <div class="msg-text">{{ msg.text }}</div>
+              <div class="msg-meta-row">
+                <span>{{ msg.created_at|date:"H:i" }}</span>
+                {% if msg.sender.id == request.user.id %}
+                <span class="msg-check">✓{% if msg.has_seen %}✓{% endif %}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- کنسول ورودی مخابره پیام -->
+        <div class="chat-input-console">
+          <div class="chat-quick-emojis">
+            <span class="emoji-pill" data-emoji="🪐">🪐</span>
+            <span class="emoji-pill" data-emoji="✨">✨</span>
+            <span class="emoji-pill" data-emoji="🚀">🚀</span>
+            <span class="emoji-pill" data-emoji="❤️">❤️</span>
+            <span class="emoji-pill" data-emoji="😂">😂</span>
+            <span class="emoji-pill" data-emoji="🔥">🔥</span>
+            <span class="emoji-pill" data-emoji="👍">👍</span>
+            <span class="emoji-pill" data-emoji="🛰️">🛰️</span>
+          </div>
+
+          <form class="chat-input-form" id="chat-form">
+            <input
+              type="text"
+              id="chat-message-input"
+              class="chat-text-input"
+              placeholder="پیام خود را مخابره کنید... (Enter برای ارسال)"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" id="chat-message-submit" class="btn-send-chat">
+              <span>ارسال</span>
+              <span>⚡</span>
+            </button>
+          </form>
+        </div>
+
+        {% else %}
+        <!-- صفحه حالت خالی در صورت نبود اتاق فعال -->
+        <div class="direct-empty-state">
+          <div class="empty-state-icon">📡</div>
+          <h3>مرکز ارتباطات و پیام‌رسانی مداری</h3>
+          <p>یک گفتگو را از فهرست سمت راست انتخاب کنید یا از میان دوستان مداری خود بر روی آواتار کلیک نمایید تا مخابره آغاز گردد.</p>
+          <a href="{% url 'posts:feed' %}" class="btn-start-chat-cta">
+            <span>🛰️</span>
+            <span>بازگشت به فید پایگاه</span>
+          </a>
+        </div>
+        {% endif %}
+      </main>
+    </div>
+
+    <!-- اسکریپت ریل‌تایم وب‌سوکت و تعاملات دایرکت -->
+    <script src="{% static 'direct/js/direct.js' %}"></script>
+  </body>
+</html>

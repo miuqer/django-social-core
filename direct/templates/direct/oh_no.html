@@ -1,0 +1,115 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="aurora">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>دسترسی غیرمجاز | InstaOrbit</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
+    <style>
+      .error-page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .error-card {
+        background: var(--hull-panel);
+        border: 1px solid var(--border-glow);
+        border-radius: 20px;
+        padding: 40px 32px;
+        max-width: 480px;
+        width: 100%;
+        text-align: center;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), var(--glow-shadow);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        animation: floatIn 0.4s ease-out;
+      }
+      @keyframes floatIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .error-icon {
+        font-size: 4rem;
+        filter: drop-shadow(0 0 20px var(--accent-danger));
+        animation: pulse 2s infinite ease-in-out;
+      }
+      .error-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #fff;
+      }
+      .error-desc {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+      .error-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+      }
+      .btn-error-primary {
+        background: var(--accent-primary);
+        color: #000;
+        font-weight: 800;
+        padding: 10px 22px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.25s ease;
+      }
+      .btn-error-primary:hover {
+        box-shadow: var(--glow-strong);
+        transform: translateY(-2px);
+      }
+      .btn-error-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-glow);
+        padding: 10px 22px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.25s ease;
+      }
+      .btn-error-secondary:hover {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-page-wrapper">
+      <div class="error-card">
+        <div class="error-icon">🛰️🔒</div>
+        <h1 class="error-title">خطای دسترسی امنیتی ۴۰۳</h1>
+        <p class="error-desc">
+          فرکانس ارتباطی این اتاق مداری خصوصی بوده و شما جزو فضانوردان مجاز این کانال مخابره نمی‌باشید.
+        </p>
+
+        <div class="error-actions">
+          <a href="{% url 'direct:inbox' %}" class="btn-error-primary">
+            💬 بازگشت به پیام‌ها
+          </a>
+          <a href="{% url 'posts:feed' %}" class="btn-error-secondary">
+            🏠 فید اصلی
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

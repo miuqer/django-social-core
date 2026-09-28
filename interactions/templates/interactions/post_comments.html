@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>مخابره‌های مدار #{{ post.id }} | فرکانس کامل</title>
+    <title>مخابره‌های مدار #{{ post.id }} | InstaOrbit</title>
     <link
       href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
       rel="stylesheet"
@@ -25,78 +25,28 @@
   </head>
   <body class="comments-page">
     <div class="comments-container">
-      <!-- نوار ناوبری بالا همراه با انتخابگر تم -->
-      <div class="nav-bar">
+      <!-- ۱. نوار ناوبری شیشه‌ای بالای صفحه -->
+      <nav class="nav-bar">
         <a href="{% url 'posts:feed' %}">
           <span>←</span>
           <span>بازگشت به ایستگاه مداری</span>
         </a>
 
-        <!-- انتخابگر تم -->
+        <div class="nav-orbit-badge">
+          <span>🛰️</span>
+          <span>بخش مداری #{{ post.id }}</span>
+        </div>
+
+        <!-- انتخابگر تم ۴ رنگی -->
         <div class="theme-dots-row">
           <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
           <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
           <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
           <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
         </div>
-      </div>
+      </nav>
 
-      <!-- کارت خلاصه پست مربوطه -->
-      <div class="post-summary-card">
-        <div class="post-summary-thumb">
-          {% if post.image %}
-          <img src="{{ post.image.url }}" alt="پست #{{ post.id }}" />
-          {% else %}
-          <span>🛰️</span>
-          {% endif %}
-        </div>
-        <div class="post-summary-info">
-          <div class="post-summary-author">
-            <span>{{ post.author.username }}</span>
-            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">
-              • بخش مداری #{{ post.id }}
-            </span>
-          </div>
-          {% if post.caption %}
-          <p class="post-summary-caption">{{ post.caption }}</p>
-          {% else %}
-          <p class="post-summary-caption" style="font-style: italic;">[بدون توضیح]</p>
-          {% endif %}
-        </div>
-        <div class="post-summary-actions">
-          <form
-            action="{% url 'interactions:toggle_like' post.id %}"
-            method="POST"
-            class="like-form"
-            data-post-id="{{ post.id }}"
-            style="margin: 0"
-          >
-            {% csrf_token %}
-            <button
-              type="submit"
-              class="btn-telemetry btn-like"
-              title="تپش هسته (لایک)"
-              data-post-id="{{ post.id }}"
-            >
-              <span>⚡</span>
-              <span class="likes-number" style="font-size: 0.8rem; font-weight: 700;">{{ post.likes.count }}</span>
-            </button>
-          </form>
-
-          {% if request.user.is_authenticated and post.author != request.user %}
-          <a
-            href="{% url 'accounts:toggle_follow' post.author.id %}"
-            class="btn-orbit-follow"
-            data-target-user-id="{{ post.author.id }}"
-          >
-            <span class="follow-icon">+</span>
-            <span class="follow-label">اتصال به مدار</span>
-          </a>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- پیام‌های سیستمی -->
+      <!-- پیام‌های سیستمی ایستگاه -->
       {% if messages %}
       <div class="messages-stream">
         {% for message in messages %}
@@ -108,62 +58,310 @@
       </div>
       {% endif %}
 
-      <!-- استریم دیدگاه‌ها -->
-      <div class="stream-card">
-        <div class="stream-card-header">
+      <!-- ۲. کارت کامل پست مرجع -->
+      <article class="post-summary-card cosmic-card">
+        <!-- هدر نویسنده پست -->
+        <header class="post-header-row">
+          <div class="post-author-info">
+            <div class="post-author-avatar">
+              {% if post.author.profile.avatar %}
+              <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
+            </div>
+            <div class="post-author-texts">
+              <a href="{% if post.author == request.user %}{% url 'accounts:profile' %}{% else %}#{% endif %}" class="post-author-username">
+                {{ post.author.username }}
+              </a>
+              <span class="post-author-subline">
+                {{ post.author.profile.full_name|default:"فضانورد مدار" }} • بخش #{{ post.id }}
+              </span>
+            </div>
+          </div>
+
+          <div class="post-header-actions">
+            {% if request.user.is_authenticated and post.author != request.user %}
+            <a
+              href="{% url 'direct:start_chat' post.author.id %}"
+              class="btn-chat-shortcut"
+              title="مخابره مستقیم به {{ post.author.username }}"
+            >
+              💬
+            </a>
+            <a
+              href="{% url 'accounts:toggle_follow' post.author.id %}"
+              class="btn-orbit-follow"
+              data-target-user-id="{{ post.author.id }}"
+            >
+              <span class="follow-icon">+</span>
+              <span class="follow-label">اتصال به مدار</span>
+            </a>
+            {% elif post.author == request.user %}
+            <span class="badge-self">شما (پدیدآورنده)</span>
+            {% endif %}
+          </div>
+        </header>
+
+        <!-- تصویر کامل پست (در صورت وجود) -->
+        {% if post.image %}
+        <div class="post-media-full post-media" title="دوبار کلیک برای تپش هسته (لایک)">
+          <img src="{{ post.image.url }}" alt="پست #{{ post.id }}" />
+          <div class="like-heart-burst">⚡</div>
+          <span class="media-tag-pill">📡 مخابره تصویری #{{ post.id }}</span>
+        </div>
+        {% endif %}
+
+        <!-- متن کامل کپشن پست -->
+        {% if post.caption %}
+        <div class="post-caption-box">
+          <span class="caption-author-highlight">{{ post.author.username }}:</span>
+          <span>{{ post.caption }}</span>
+        </div>
+        {% endif %}
+
+        <!-- نوار تلمتری پست -->
+        <footer class="post-telemetry-row">
+          <div class="telemetry-left">
+            <form
+              action="{% url 'interactions:toggle_like' post.id %}"
+              method="POST"
+              class="like-form"
+              data-post-id="{{ post.id }}"
+              style="margin: 0"
+            >
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn-telemetry btn-like {% if is_liked %}liked{% endif %}"
+                title="تپش هسته (لایک)"
+                data-post-id="{{ post.id }}"
+              >
+                <span class="like-bolt-icon">⚡</span>
+                <span class="likes-number">{{ post.likes.count }}</span>
+              </button>
+            </form>
+
+            <button
+              type="button"
+              class="btn-telemetry"
+              onclick="var inp = document.getElementById('detail-comment-input'); if(inp){ inp.focus(); inp.scrollIntoView({behavior: 'smooth', block: 'center'}); }"
+              title="نوشتن دیدگاه"
+            >
+              💬 {{ comments.count }}
+            </button>
+
+            {% if request.user.is_authenticated and post.author != request.user %}
+            <a
+              href="{% url 'direct:start_chat' post.author.id %}"
+              class="btn-telemetry"
+              title="مخابره مستقیم به نویسنده"
+            >
+              🚀
+            </a>
+            {% endif %}
+          </div>
+
+          <span class="post-stardate-label">
+            زمان مدار: {{ post.created_at|date:"Y-m-d // H:i" }}
+          </span>
+        </footer>
+      </article>
+
+      <!-- ۳. استریم دیدگاه‌ها -->
+      <section class="stream-card">
+        <header class="stream-card-header">
           <h3>
             <span>💬</span>
             <span>تمام مخابره‌های دریافتی ({{ comments.count }})</span>
           </h3>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">
+          <span style="font-size: 0.74rem; color: var(--text-muted);">
             {{ post.created_at|date:"Y-m-d" }}
           </span>
-        </div>
+        </header>
 
-        <div class="comments-list">
+        <!-- لیست دیدگاه‌ها -->
+        <div class="comments-list" id="comments-list-box">
           {% for comment in comments %}
-          <div class="msg-bubble">
-            <div class="msg-header">
-              <span class="sender-tag">
-                <span>👨‍🚀</span>
-                <span>{{ comment.author.username }}</span>
-              </span>
-              <span class="msg-date">
-                {{ comment.created_at|date:"Y-m-d // H:i" }}
-              </span>
+          <div class="comment-item">
+            <div class="comment-avatar">
+              {% if comment.author.profile.avatar %}
+              <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
             </div>
-            <div>{{ comment.text }}</div>
+
+            <div class="comment-body">
+              <div class="comment-header">
+                <span class="comment-author-name">
+                  <span>{{ comment.author.username }}</span>
+                  {% if comment.author == post.author %}
+                  <span class="badge-op">پدیدآورنده</span>
+                  {% endif %}
+                </span>
+                <span class="comment-time">
+                  {{ comment.created_at|date:"Y-m-d // H:i" }}
+                </span>
+              </div>
+
+              <div class="comment-text">{{ comment.text }}</div>
+
+              <div class="comment-actions-row">
+                <button
+                  type="button"
+                  class="btn-comment-reply"
+                  data-username="{{ comment.author.username }}"
+                >
+                  پاسخ ↩
+                </button>
+
+                {% if request.user.is_authenticated and comment.author != request.user %}
+                <a
+                  href="{% url 'direct:start_chat' comment.author.id %}"
+                  class="btn-comment-direct"
+                  title="مخابره مستقیم به این کاربر"
+                >
+                  💬 مخابره
+                </a>
+                {% endif %}
+
+                {% if request.user.is_authenticated and comment.author == request.user or post.author == request.user %}
+                <form
+                  action="{% url 'interactions:delete_comment' comment.id %}"
+                  method="POST"
+                  style="margin: 0; display: inline;"
+                >
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    class="btn-comment-delete"
+                    title="حذف این دیدگاه"
+                    onclick="return confirm('آیا از حذف این فرکانس از مدار اطمینان دارید؟');"
+                  >
+                    🗑️ حذف
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
           </div>
           {% empty %}
-          <p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; padding: 30px 0;">
-            🛰️ هنوز هیچ فرکانسی برای این پست مخابره نشده است. اولین سیگنال را شما بفرستید!
-          </p>
+          <div class="comments-empty-notice">
+            <span style="font-size: 2.2rem;">🛰️</span>
+            <span style="font-weight: 700; color: #fff;">هنوز هیچ فرکانسی برای این پست مخابره نشده است.</span>
+            <span>نخستین فضانوردی باشید که پیام خود را ثبت می‌کند!</span>
+          </div>
           {% endfor %}
         </div>
 
-        <!-- فرم ارسال دیدگاه مستقیم از صفحه جزئیات -->
+        <!-- ۴. فرم ارسال دیدگاه جدید -->
+        {% if request.user.is_authenticated %}
         <form
           class="detail-comment-form"
+          id="detail-comment-form"
           action="{% url 'interactions:add_comment' post.id %}"
           method="POST"
         >
           {% csrf_token %}
-          <input
-            type="text"
-            name="text"
-            class="detail-comment-input"
-            placeholder="مخابره فرکانس جدید به این مدار..."
-            autocomplete="off"
-            required
-          />
-          <button type="submit" class="btn-detail-comment-submit">
-            ارسال
-          </button>
+
+          <!-- نوار ایموجی‌های کیهانی -->
+          <div class="comment-emoji-bar">
+            <span class="emoji-pill" data-emoji="🪐">🪐</span>
+            <span class="emoji-pill" data-emoji="✨">✨</span>
+            <span class="emoji-pill" data-emoji="🚀">🚀</span>
+            <span class="emoji-pill" data-emoji="❤️">❤️</span>
+            <span class="emoji-pill" data-emoji="🔥">🔥</span>
+            <span class="emoji-pill" data-emoji="😂">😂</span>
+            <span class="emoji-pill" data-emoji="👏">👏</span>
+            <span class="emoji-pill" data-emoji="💯">💯</span>
+          </div>
+
+          <div class="comment-input-row">
+            <div class="comment-user-avatar">
+              {% if request.user.profile.avatar %}
+              <img src="{{ request.user.profile.avatar.url }}" alt="{{ request.user.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
+            </div>
+
+            <input
+              type="text"
+              name="text"
+              id="detail-comment-input"
+              class="detail-comment-input"
+              placeholder="دیدگاه خود را مخابره کنید... (Enter برای ارسال)"
+              autocomplete="off"
+              required
+            />
+
+            <button type="submit" class="btn-detail-comment-submit">
+              <span>ارسال</span>
+              <span>⚡</span>
+            </button>
+          </div>
         </form>
-      </div>
+        {% else %}
+        <div class="comment-guest-notice">
+          <span>🚀</span>
+          <span>
+            جهت ارسال دیدگاه، لطفاً ابتدا
+            <a href="{% url 'accounts:login' %}" style="color: var(--accent-primary); font-weight: 700;">وارد شوید</a>
+            یا
+            <a href="{% url 'accounts:register' %}" style="color: var(--accent-secondary); font-weight: 700;">عضو شوید</a>.
+          </span>
+        </div>
+        {% endif %}
+      </section>
     </div>
 
-    <!-- تعاملات مداری و دکمه اتصال -->
+    <!-- تعاملات مداری فید و تم -->
     <script src="{% static 'posts/js/feed.js' %}"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var commentInput = document.getElementById("detail-comment-input");
+        var commentsBox = document.getElementById("comments-list-box");
+        var commentForm = document.getElementById("detail-comment-form");
+
+        // اسکرول هوشمند به آخرین دیدگاه ثبت‌شده در پایین لیست
+        if (commentsBox) {
+          commentsBox.scrollTop = commentsBox.scrollHeight;
+        }
+
+        // درج ایموجی در کادر دیدگاه
+        document.querySelectorAll(".emoji-pill").forEach(function (pill) {
+          pill.addEventListener("click", function () {
+            var emoji = pill.getAttribute("data-emoji");
+            if (emoji && commentInput) {
+              commentInput.value += emoji;
+              commentInput.focus();
+            }
+          });
+        });
+
+        // دکمه پاسخ سریع: درج نام کاربری در کادر متن
+        document.querySelectorAll(".btn-comment-reply").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var username = btn.getAttribute("data-username");
+            if (username && commentInput) {
+              commentInput.value = "@" + username + " ";
+              commentInput.focus();
+              commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          });
+        });
+
+        // ارسال با کلید Enter (بدون Shift)
+        if (commentInput && commentForm) {
+          commentInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              commentForm.submit();
+            }
+          });
+        }
+      });
+    </script>
   </body>
 </html>

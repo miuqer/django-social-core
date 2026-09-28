@@ -207,13 +207,23 @@
                 <span class="network-user-sub">{{ rel.follower.profile.full_name|default:"فضانورد بدون نام" }}</span>
               </div>
             </div>
-            <a
-              href="{% url 'accounts:toggle_follow' rel.follower.id %}"
-              class="btn-network-action btn-network-follow"
-              data-target-user-id="{{ rel.follower.id }}"
-            >
-              اتصال
-            </a>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <a
+                href="{% url 'direct:start_chat' rel.follower.id %}"
+                class="btn-network-action"
+                style="background: rgba(255, 255, 255, 0.05); border-color: var(--border-glow); color: var(--accent-primary);"
+                title="مخابره مستقیم به {{ rel.follower.username }}"
+              >
+                💬
+              </a>
+              <a
+                href="{% url 'accounts:toggle_follow' rel.follower.id %}"
+                class="btn-network-action btn-network-follow"
+                data-target-user-id="{{ rel.follower.id }}"
+              >
+                اتصال
+              </a>
+            </div>
           </div>
           {% empty %}
           <div class="network-empty">
@@ -237,9 +247,19 @@
                 <span class="network-user-sub">{{ rel.following.profile.full_name|default:"فضانورد بدون نام" }}</span>
               </div>
             </div>
-            <a href="{% url 'accounts:toggle_follow' rel.following.id %}" class="btn-network-action btn-network-unfollow">
-              قطع ارتباط
-            </a>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <a
+                href="{% url 'direct:start_chat' rel.following.id %}"
+                class="btn-network-action"
+                style="background: rgba(255, 255, 255, 0.05); border-color: var(--border-glow); color: var(--accent-primary);"
+                title="مخابره مستقیم به {{ rel.following.username }}"
+              >
+                💬
+              </a>
+              <a href="{% url 'accounts:toggle_follow' rel.following.id %}" class="btn-network-action btn-network-unfollow">
+                قطع ارتباط
+              </a>
+            </div>
           </div>
           {% empty %}
           <div class="network-empty">

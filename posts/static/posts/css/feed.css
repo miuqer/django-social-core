@@ -770,6 +770,29 @@
   box-shadow: 0 0 8px rgba(244, 63, 94, 0.2);
 }
 
+.btn-mini-chat {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-size: 0.76rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.btn-mini-chat:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  transform: scale(1.1);
+}
+
 .connections-empty {
   padding: 16px 8px;
   text-align: center;

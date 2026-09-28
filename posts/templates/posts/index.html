@@ -40,7 +40,9 @@
             </li>
             <li class="nav-item"><a href="#">🔍 اسکن و جستجو</a></li>
             <li class="nav-item"><a href="#">🧭 کاوش مداری</a></li>
-            <li class="nav-item"><a href="#">💬 پیام‌های مستقیم</a></li>
+            <li class="nav-item">
+              <a href="{% url 'direct:inbox' %}">💬 پیام‌های مستقیم</a>
+            </li>
             <li class="nav-item">
               <a href="{% url 'posts:create_post' %}">➕ مخابره پست جدید</a>
             </li>
@@ -174,6 +176,13 @@
             <div class="post-header-actions">
               {% if request.user.is_authenticated and post.author != request.user %}
               <a
+                href="{% url 'direct:start_chat' post.author.id %}"
+                class="btn-mini-chat"
+                title="مخابره مستقیم به {{ post.author.username }}"
+              >
+                💬
+              </a>
+              <a
                 href="{% url 'accounts:toggle_follow' post.author.id %}"
                 class="btn-orbit-follow"
                 data-target-user-id="{{ post.author.id }}"
@@ -222,9 +231,14 @@
               >
                 💬
               </a>
-              <button type="button" class="btn-telemetry" title="رله فرکانس (ارسال)">
+              <a
+                href="{% if request.user.is_authenticated and post.author != request.user %}{% url 'direct:start_chat' post.author.id %}{% else %}{% url 'direct:inbox' %}{% endif %}"
+                class="btn-telemetry"
+                title="رله فرکانس (مخابره مستقیم)"
+                style="text-decoration: none"
+              >
                 🚀
-              </button>
+              </a>
             </div>
             <button type="button" class="btn-telemetry" title="ذخیره در هسته">🔖</button>
           </div>
@@ -358,13 +372,22 @@
                   <span class="connection-fullname">{{ rel.following.profile.full_name|default:"فضانورد مداری" }}</span>
                 </div>
               </div>
-              <a
-                href="{% url 'accounts:toggle_follow' rel.following.id %}"
-                class="btn-mini-unfollow"
-                title="قطع ارتباط با {{ rel.following.username }}"
-              >
-                ✕
-              </a>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <a
+                  href="{% url 'direct:start_chat' rel.following.id %}"
+                  class="btn-mini-chat"
+                  title="مخابره مستقیم به {{ rel.following.username }}"
+                >
+                  💬
+                </a>
+                <a
+                  href="{% url 'accounts:toggle_follow' rel.following.id %}"
+                  class="btn-mini-unfollow"
+                  title="قطع ارتباط با {{ rel.following.username }}"
+                >
+                  ✕
+                </a>
+              </div>
             </div>
             {% empty %}
             <div class="connections-empty">

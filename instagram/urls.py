@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("posts.urls")),  # مسیر فید مداری
     path("accounts/", include("accounts.urls")),  # سیستم کاربری
     path("interactions/", include("interactions.urls")),  # لایک و کامنت
+    path("direct/", include("direct.urls")),  # دایرکت
 ]
 
 if settings.DEBUG:
