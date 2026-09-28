@@ -1,0 +1,113 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="aurora">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مخابره پست جدید | InstaOrbit</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'posts/css/create_post.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
+  </head>
+  <body class="create-post-page">
+    <div class="create-post-container">
+      <div class="create-card">
+        <!-- هدر فرم ایجاد پست -->
+        <div class="create-header">
+          <div class="create-header-title">
+            <span style="font-size: 1.5rem">🛰️</span>
+            <h2>مخابره سیگنال جدید به مدار</h2>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="theme-dots-row">
+              <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
+              <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
+              <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
+              <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
+            </div>
+            <a href="{% url 'posts:feed' %}" class="btn-back-feed">
+              ← بازگشت به فید
+            </a>
+          </div>
+        </div>
+
+        <!-- پیام‌های سیستمی و خطاها -->
+        {% if messages %}
+        <div class="messages-stream">
+          {% for message in messages %}
+          <div class="sys-msg {% if message.tags == 'error' %}sys-msg-error{% else %}sys-msg-success{% endif %}">
+            <span>{% if message.tags == 'error' %}⚠️{% else %}🛰️{% endif %}</span>
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- فرم ارسال پست -->
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- ناحیه دراگ و دراپ یا کلیک برای انتخاب تصویر -->
+          <div class="dropzone-box" id="dropzone">
+            <!-- حالت اولیه قبل از انتخاب تصویر -->
+            <div class="dropzone-prompt" id="dropzone-prompt">
+              <span class="dropzone-icon">🌌</span>
+              <div class="dropzone-title">داده تصویری را اینجا رها کنید یا کلیک نمایید</div>
+              <span class="dropzone-sub">پشتیبانی از فرمت‌های JPG ،PNG و WebP</span>
+            </div>
+
+            <!-- حالت پیش‌نمایش تصویر پس از انتخاب -->
+            <div class="preview-container" id="preview-container">
+              <img id="preview-img" src="" alt="پیش‌نمایش تصویر پست" />
+              <button
+                type="button"
+                id="btn-remove-image"
+                class="btn-remove-image"
+                title="حذف تصویر"
+              >
+                ✕
+              </button>
+            </div>
+
+            <!-- اینپوت مخفی فایل -->
+            <input
+              type="file"
+              name="image"
+              id="image-input"
+              accept="image/*"
+              style="display: none"
+              required
+            />
+          </div>
+
+          <!-- بخش متن یا کپشن پست -->
+          <div class="caption-group">
+            <label for="caption-textarea">
+              <span>گزارش و یادداشت مخابره (کپشن)</span>
+              <span class="caption-counter" id="caption-counter">۰ کاراکتر</span>
+            </label>
+            <textarea
+              name="caption"
+              id="caption-textarea"
+              placeholder="شرحی از ماموریت مداری، فرکانس یا جزئیات این تصویر بنویسید..."
+            ></textarea>
+          </div>
+
+          <!-- دکمه مخابره نهایی -->
+          <button type="submit" class="btn-submit-post">
+            <span>🚀</span>
+            <span>مخابره داده به مدار شبکه</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- اسکریپت دراگ و دراپ و پیش‌نمایش آنی -->
+    <script src="{% static 'posts/js/create_post.js' %}"></script>
+  </body>
+</html>

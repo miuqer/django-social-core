@@ -1,0 +1,245 @@
+/* ==========================================================================
+   InstaOrbit - Create Post Page Styling
+   ========================================================================== */
+
+body.create-post-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 16px;
+  min-height: 100vh;
+}
+
+.create-post-container {
+  width: 100%;
+  max-width: 580px;
+}
+
+.create-card {
+  background: var(--hull-panel);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 36px 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), var(--glow-shadow);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.create-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ring-gradient);
+}
+
+.create-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.create-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.create-header-title h2 {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-shadow: 0 0 12px var(--accent-primary);
+}
+
+.btn-back-feed {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.btn-back-feed:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+}
+
+/* ناحیه دراگ و دراپ تصویر */
+.dropzone-box {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 2px dashed var(--border-glow);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropzone-box:hover,
+.dropzone-box.dragover {
+  border-color: var(--accent-primary);
+  background: rgba(0, 0, 0, 0.55);
+  box-shadow: var(--glow-strong);
+  transform: scale(1.01);
+}
+
+.dropzone-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 20px;
+}
+
+.dropzone-icon {
+  font-size: 2.8rem;
+  transition: transform 0.3s ease;
+}
+
+.dropzone-box:hover .dropzone-icon {
+  transform: translateY(-4px) scale(1.1);
+}
+
+.dropzone-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dropzone-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* کانتینر پیش‌نمایش تصویر */
+.preview-container {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.preview-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-remove-image {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid var(--accent-danger);
+  color: var(--accent-danger);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.btn-remove-image:hover {
+  background: var(--accent-danger);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* متن کپشن */
+.caption-group {
+  margin-bottom: 22px;
+}
+
+.caption-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-glow);
+}
+
+.caption-counter {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.caption-group textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  color: #fff;
+  outline: none;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.caption-group textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.caption-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* دکمه ارسال مخابره */
+.btn-submit-post {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent-primary);
+  border: none;
+  border-radius: 14px;
+  color: #000;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--glow-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-submit-post:hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-strong);
+}
+
+.btn-submit-post:active {
+  transform: translateY(0);
+}

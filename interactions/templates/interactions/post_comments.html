@@ -16,33 +16,110 @@
   </head>
   <body class="comments-page">
     <div class="comments-container">
+      <!-- نوار ناوبری بالا همراه با انتخابگر تم -->
       <div class="nav-bar">
-        <a href="{% url 'posts:feed' %}">← بازگشت به ایستگاه مداری</a>
-        <span style="font-size: 0.8rem; color: var(--text-muted)">
-          بخش مداری #{{ post.id }}
-        </span>
+        <a href="{% url 'posts:feed' %}">
+          <span>←</span>
+          <span>بازگشت به ایستگاه مداری</span>
+        </a>
+
+        <!-- انتخابگر تم -->
+        <div class="theme-dots-row">
+          <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
+          <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
+        </div>
       </div>
 
-      <div class="stream-card">
-        <h3>
-          تمام مخابره‌های دریافتی ({{ comments.count }})
-        </h3>
-
-        {% for comment in comments %}
-        <div class="msg-bubble">
-          <div class="msg-header">
-            <span class="sender-tag">{{ comment.author.username }}</span>
-            <span class="msg-date">
-              {{ comment.created_at|date:"Y-m-d // H:i" }}
+      <!-- کارت خلاصه پست مربوطه -->
+      <div class="post-summary-card">
+        <div class="post-summary-thumb">
+          {% if post.image %}
+          <img src="{{ post.image.url }}" alt="پست #{{ post.id }}" />
+          {% else %}
+          <span>🛰️</span>
+          {% endif %}
+        </div>
+        <div class="post-summary-info">
+          <div class="post-summary-author">
+            <span>{{ post.author.username }}</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">
+              • بخش مداری #{{ post.id }}
             </span>
           </div>
-          <div>{{ comment.text }}</div>
+          {% if post.caption %}
+          <p class="post-summary-caption">{{ post.caption }}</p>
+          {% else %}
+          <p class="post-summary-caption" style="font-style: italic;">[بدون توضیح]</p>
+          {% endif %}
         </div>
-        {% empty %}
-        <p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; padding: 20px 0;">
-          هیچ پیامی ثبت نشده است.
-        </p>
+      </div>
+
+      <!-- پیام‌های سیستمی -->
+      {% if messages %}
+      <div class="messages-stream">
+        {% for message in messages %}
+        <div class="sys-msg {% if message.tags == 'error' %}sys-msg-error{% else %}sys-msg-success{% endif %}">
+          <span>{% if message.tags == 'error' %}⚠️{% else %}🛰️{% endif %}</span>
+          <span>{{ message }}</span>
+        </div>
         {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- استریم دیدگاه‌ها -->
+      <div class="stream-card">
+        <div class="stream-card-header">
+          <h3>
+            <span>💬</span>
+            <span>تمام مخابره‌های دریافتی ({{ comments.count }})</span>
+          </h3>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">
+            {{ post.created_at|date:"Y-m-d" }}
+          </span>
+        </div>
+
+        <div class="comments-list">
+          {% for comment in comments %}
+          <div class="msg-bubble">
+            <div class="msg-header">
+              <span class="sender-tag">
+                <span>👨‍🚀</span>
+                <span>{{ comment.author.username }}</span>
+              </span>
+              <span class="msg-date">
+                {{ comment.created_at|date:"Y-m-d // H:i" }}
+              </span>
+            </div>
+            <div>{{ comment.text }}</div>
+          </div>
+          {% empty %}
+          <p style="font-size: 0.82rem; color: var(--text-muted); text-align: center; padding: 30px 0;">
+            🛰️ هنوز هیچ فرکانسی برای این پست مخابره نشده است. اولین سیگنال را شما بفرستید!
+          </p>
+          {% endfor %}
+        </div>
+
+        <!-- فرم ارسال دیدگاه مستقیم از صفحه جزئیات -->
+        <form
+          class="detail-comment-form"
+          action="{% url 'interactions:add_comment' post.id %}"
+          method="POST"
+        >
+          {% csrf_token %}
+          <input
+            type="text"
+            name="text"
+            class="detail-comment-input"
+            placeholder="مخابره فرکانس جدید به این مدار..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="btn-detail-comment-submit">
+            ارسال
+          </button>
+        </form>
       </div>
     </div>
   </body>

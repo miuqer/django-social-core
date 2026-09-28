@@ -16,6 +16,17 @@
   </head>
   <body class="auth-page">
     <div class="auth-card">
+      <!-- نوار بالا و انتخابگر تم -->
+      <div class="auth-top-bar">
+        <a href="{% url 'posts:feed' %}">← بازگشت به فید</a>
+        <div class="theme-dots-row">
+          <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
+          <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
+        </div>
+      </div>
+
       <div class="auth-header">
         <div class="logo-icon">🚀</div>
         <h2>ثبت‌نام در شبکه مداری</h2>
@@ -93,10 +104,6 @@
       <div class="switch-link">
         قبلاً ثبت‌نام کرده‌اید؟
         <a href="{% url 'accounts:login' %}">ورود به ایستگاه</a>
-      </div>
-
-      <div class="auth-nav-home">
-        <a href="{% url 'posts:feed' %}">← بازگشت به فید اصلی</a>
       </div>
     </div>
   </body>

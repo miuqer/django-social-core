@@ -5,83 +5,175 @@
 body.comments-page {
   display: flex;
   justify-content: center;
-  padding: 40px 16px;
+  align-items: flex-start;
+  padding: 36px 16px;
   min-height: 100vh;
 }
 
 .comments-container {
   width: 100%;
-  max-width: 540px;
+  max-width: 580px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .nav-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
+  padding: 14px 20px;
   background: var(--hull-panel);
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .nav-bar a {
   color: var(--accent-primary);
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   transition: all 0.2s ease;
 }
 
 .nav-bar a:hover {
   text-shadow: 0 0 8px var(--accent-primary);
+  transform: translateX(3px);
 }
 
+/* کارت پست مرجع در بالای کامنت‌ها */
+.post-summary-card {
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.post-summary-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-glow);
+  flex-shrink: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-summary-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-summary-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-summary-author {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-summary-caption {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* کارت استریم کامنت‌ها */
 .stream-card {
   background: var(--hull-panel);
   border: 1px solid var(--border-subtle);
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), var(--glow-shadow);
+  position: relative;
+  overflow: hidden;
 }
 
-.stream-card h3 {
-  color: var(--accent-primary);
-  font-size: 1.05rem;
-  font-weight: 800;
+.stream-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ring-gradient);
+}
+
+.stream-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding-bottom: 12px;
   margin-bottom: 4px;
 }
 
+.stream-card-header h3 {
+  color: var(--accent-primary);
+  font-size: 1.05rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-left: 4px;
+}
+
 .msg-bubble {
   background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
   border-right: 3px solid var(--accent-primary);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px 16px;
   font-size: 0.86rem;
   line-height: 1.6;
-  border: 1px solid var(--border-subtle);
-  border-right: 3px solid var(--accent-primary);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .msg-bubble:hover {
-  transform: translateX(-2px);
+  transform: translateX(-3px);
   box-shadow: var(--glow-shadow);
+  border-color: var(--border-glow);
 }
 
 .msg-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 6px;
   font-size: 0.78rem;
 }
@@ -89,9 +181,58 @@ body.comments-page {
 .sender-tag {
   color: var(--accent-primary);
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .msg-date {
   color: var(--text-muted);
   font-size: 0.72rem;
+}
+
+/* فرم ارسال پیام جدید در صفحه جزئیات */
+.detail-comment-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.detail-comment-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.detail-comment-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.btn-detail-comment-submit {
+  background: var(--accent-primary);
+  border: none;
+  color: #000;
+  font-weight: 800;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--glow-shadow);
+}
+
+.btn-detail-comment-submit:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-strong);
 }

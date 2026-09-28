@@ -16,9 +16,40 @@
   </head>
   <body class="profile-page">
     <div class="profile-card">
+      <!-- نوار بالای کارت پروفایل -->
+      <div class="profile-top-bar">
+        <a href="{% url 'posts:feed' %}">← بازگشت به فید</a>
+
+        <!-- انتخابگر تم -->
+        <div class="theme-dots-row">
+          <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
+          <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
+        </div>
+      </div>
+
       <div class="profile-header">
         <h2>تنظیمات پایگاه هویتی</h2>
         <p>مشخصات سیگنال و نمایه فضانوردی خود را ویرایش کنید</p>
+      </div>
+
+      <!-- آمار کوتاه فضانورد -->
+      <div class="profile-stats-row">
+        <div class="stat-item">
+          <span class="stat-val">{{ request.user.posts.count }}</span>
+          <span class="stat-label">مخابره پست</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val" style="color: var(--accent-secondary);">
+            {% if request.user.is_admin %}فرمانده{% else %}فضانورد{% endif %}
+          </span>
+          <span class="stat-label">سطح مدار</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">فعال 🛰️</span>
+          <span class="stat-label">وضعیت فرکانس</span>
+        </div>
       </div>
 
       {% if messages %}
@@ -56,7 +87,7 @@
         </div>
 
         <div class="form-group">
-          <label>نام کاربری (غیرقابل تغییر)</label>
+          <label>شناسه کاربری (غیرقابل تغییر)</label>
           <input type="text" value="{{ request.user.username }}" readonly />
         </div>
 
@@ -104,7 +135,7 @@
       </form>
 
       <div class="profile-nav-links">
-        <a href="{% url 'posts:feed' %}">← بازگشت به فید اصلی</a>
+        <a href="{% url 'posts:feed' %}">← فید اصلی</a>
         <a href="{% url 'accounts:logout' %}" style="color: var(--accent-danger);">خروج از حساب</a>
       </div>
     </div>
