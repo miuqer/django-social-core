@@ -89,34 +89,12 @@ body.auth-page {
   position: relative;
 }
 
-.input-label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
 .input-box label {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-glow);
-}
-
-.input-box:not(:has(.input-label-row)) label {
   margin-bottom: 6px;
-}
-
-.forgot-link {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.forgot-link:hover {
-  color: var(--accent-primary);
-  text-shadow: 0 0 8px var(--accent-primary);
 }
 
 .input-box input {
@@ -124,11 +102,11 @@ body.auth-page {
   padding: 11px 14px;
   background: rgba(0, 0, 0, 0.45);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 12px;
   color: #fff;
   font-size: 0.85rem;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .input-box input:focus {
@@ -140,6 +118,133 @@ body.auth-page {
 .input-box input::placeholder {
   color: rgba(255, 255, 255, 0.25);
   font-size: 0.8rem;
+}
+
+/* ظرف فیلد گذرواژه همراه با دکمه چشمک‌آسا */
+.password-field-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field-container input {
+  padding-left: 42px; /* فضای دکمه در زبان فارسی RTL */
+}
+
+.btn-toggle-pw {
+  position: absolute;
+  left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.65;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+.btn-toggle-pw:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* سطر کمکی بازیابی گذرواژه (زیر فیلد رمز عبور) */
+.auth-helper-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.auth-recovery-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-recovery-btn .recovery-icon {
+  font-size: 0.8rem;
+}
+
+.auth-recovery-btn .recovery-arrow {
+  font-size: 0.72rem;
+  opacity: 0.5;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.auth-recovery-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-glow);
+  color: #fff;
+  box-shadow: 0 0 14px var(--border-glow);
+  transform: translateX(-3px);
+}
+
+.auth-recovery-btn:hover .recovery-arrow {
+  opacity: 1;
+  color: var(--accent-primary);
+  transform: translateX(-3px);
+}
+
+/* جداکننده مدرن بخش‌های ورود و ثبت‌نام */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 22px 0 16px 0;
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 0.72rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-divider span {
+  padding: 0 10px;
+}
+
+.auth-switch-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.btn-switch-register {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-switch-register:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-glow);
+  box-shadow: var(--glow-shadow);
+  transform: translateY(-2px);
 }
 
 .btn-submit {

@@ -36,6 +36,7 @@ def add_comment(request, post_id):
         else:
             messages.error(request, "متن مخابره نمی‌تواند خالی باشد.")
         return redirect(request.META.get("HTTP_REFERER", "posts:feed"))
+    return redirect(request.META.get("HTTP_REFERER", "posts:feed"))
 
 
 def post_comments_detail(request, post_id):

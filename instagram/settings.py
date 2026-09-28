@@ -31,9 +31,12 @@ AUTH_USER_MODEL = "accounts.MyUser"
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    "direct",
     "interactions",
     "posts",
     "accounts",
+    "channels",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -70,8 +73,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "instagram.wsgi.application"
-
-
+ASGI_APPLICATION = "instagram.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 

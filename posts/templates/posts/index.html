@@ -17,8 +17,10 @@
     <script>
       {% if request.user.is_authenticated %}
       window.currentFollowingIds = [{% for rel in request.user.following_relations.all %}{{ rel.following.id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      window.currentLikedPostIds = [{% for like in request.user.user_likes.all %}{{ like.post_id }}{% if not forloop.last %},{% endif %}{% endfor %}];
       {% else %}
       window.currentFollowingIds = [];
+      window.currentLikedPostIds = [];
       {% endif %}
     </script>
   </head>
@@ -198,15 +200,18 @@
               <form
                 action="{% url 'interactions:toggle_like' post.id %}"
                 method="POST"
+                class="like-form"
+                data-post-id="{{ post.id }}"
                 style="margin: 0"
               >
                 {% csrf_token %}
                 <button
                   type="submit"
-                  class="btn-telemetry"
+                  class="btn-telemetry btn-like"
                   title="تپش هسته (لایک)"
+                  data-post-id="{{ post.id }}"
                 >
-                  ⚡
+                  <span class="like-bolt-icon">⚡</span>
                 </button>
               </form>
               <a
@@ -225,7 +230,9 @@
           </div>
 
           <div class="post-body">
-            <div class="likes-count">{{ post.total_likes }} تپش هسته</div>
+            <div class="likes-count" data-post-id="{{ post.id }}">
+              <span class="likes-number">{{ post.total_likes }}</span> تپش هسته
+            </div>
 
             {% if post.caption %}
             <div class="caption-log">

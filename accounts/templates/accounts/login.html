@@ -30,7 +30,7 @@
       <div class="auth-header">
         <div class="logo-icon">🛰️</div>
         <h2>ایستگاه ورود مدار</h2>
-        <p>شناسه کوانتومی خود را وارد کنید</p>
+        <p>شناسه کوانتومی خود را جهت اتصال به پایگاه وارد نمایید</p>
       </div>
 
       {% if messages %}
@@ -47,37 +47,61 @@
       <form method="POST">
         {% csrf_token %}
         <div class="input-box">
-          <label>شناسه کاربری</label>
+          <label for="login-username">شناسه کاربری</label>
           <input
             type="text"
+            id="login-username"
             name="username"
             placeholder="مثال: astron_01"
             autocomplete="username"
             required
           />
         </div>
+
         <div class="input-box">
-          <div class="input-label-row">
-            <label>رمز عبور</label>
-            <a href="{% url 'accounts:password_reset_request' %}" class="forgot-link">فراموشی گذرواژه؟</a>
+          <label for="login-password">گذرواژه مداری</label>
+          <div class="password-field-container">
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            />
+            <button type="button" class="btn-toggle-pw" title="نمایش/پنهان‌سازی گذرواژه" tabindex="-1">
+              <span class="pw-eye-icon">👁️</span>
+            </button>
           </div>
-          <input
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            required
-          />
+          <!-- پیوند شیک و زیبای بازیابی گذرواژه -->
+          <div class="auth-helper-row">
+            <a href="{% url 'accounts:password_reset_request' %}" class="auth-recovery-btn">
+              <span class="recovery-icon">🔑</span>
+              <span class="recovery-text">فراموشی یا بازیابی گذرواژه مداری</span>
+              <span class="recovery-arrow">←</span>
+            </a>
+          </div>
         </div>
+
         <button type="submit" class="btn-submit">
           تایید و ورود به ایستگاه
         </button>
       </form>
 
-      <div class="switch-link">
-        حسابی در شبکه ندارید؟
-        <a href="{% url 'accounts:register' %}">ثبت‌نام فضانورد جدید</a>
+      <div class="auth-divider">
+        <span>یا عضویت در مدار</span>
+      </div>
+
+      <div class="auth-switch-box">
+        <span>هنوز در ایستگاه ثبت‌نام نکرده‌اید؟</span>
+        <a href="{% url 'accounts:register' %}" class="btn-switch-register">
+          <span>🚀</span>
+          <span>ثبت‌نام فضانورد جدید</span>
+        </a>
       </div>
     </div>
+
+    <!-- اسکریپت تعاملات فرم احراز هویت -->
+    <script src="{% static 'accounts/js/auth.js' %}"></script>
   </body>
 </html>

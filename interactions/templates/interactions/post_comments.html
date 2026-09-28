@@ -16,8 +16,10 @@
     <script>
       {% if request.user.is_authenticated %}
       window.currentFollowingIds = [{% for rel in request.user.following_relations.all %}{{ rel.following.id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      window.currentLikedPostIds = [{% for like in request.user.user_likes.all %}{{ like.post_id }}{% if not forloop.last %},{% endif %}{% endfor %}];
       {% else %}
       window.currentFollowingIds = [];
+      window.currentLikedPostIds = [];
       {% endif %}
     </script>
   </head>
@@ -61,8 +63,27 @@
           <p class="post-summary-caption" style="font-style: italic;">[بدون توضیح]</p>
           {% endif %}
         </div>
-        {% if request.user.is_authenticated and post.author != request.user %}
         <div class="post-summary-actions">
+          <form
+            action="{% url 'interactions:toggle_like' post.id %}"
+            method="POST"
+            class="like-form"
+            data-post-id="{{ post.id }}"
+            style="margin: 0"
+          >
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="btn-telemetry btn-like"
+              title="تپش هسته (لایک)"
+              data-post-id="{{ post.id }}"
+            >
+              <span>⚡</span>
+              <span class="likes-number" style="font-size: 0.8rem; font-weight: 700;">{{ post.likes.count }}</span>
+            </button>
+          </form>
+
+          {% if request.user.is_authenticated and post.author != request.user %}
           <a
             href="{% url 'accounts:toggle_follow' post.author.id %}"
             class="btn-orbit-follow"
@@ -71,8 +92,8 @@
             <span class="follow-icon">+</span>
             <span class="follow-label">اتصال به مدار</span>
           </a>
+          {% endif %}
         </div>
-        {% endif %}
       </div>
 
       <!-- پیام‌های سیستمی -->

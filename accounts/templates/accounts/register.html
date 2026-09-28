@@ -78,33 +78,53 @@
         </div>
         <div class="input-box">
           <label>رمز عبور</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            autocomplete="new-password"
-            required
-          />
+          <div class="password-field-container">
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required
+            />
+            <button type="button" class="btn-toggle-pw" title="نمایش/پنهان‌سازی رمز" tabindex="-1">
+              <span class="pw-eye-icon">👁️</span>
+            </button>
+          </div>
         </div>
         <div class="input-box">
           <label>تکرار رمز عبور</label>
-          <input
-            type="password"
-            name="confirm_password"
-            placeholder="••••••••"
-            autocomplete="new-password"
-            required
-          />
+          <div class="password-field-container">
+            <input
+              type="password"
+              name="confirm_password"
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required
+            />
+            <button type="button" class="btn-toggle-pw" title="نمایش/پنهان‌سازی رمز" tabindex="-1">
+              <span class="pw-eye-icon">👁️</span>
+            </button>
+          </div>
         </div>
         <button type="submit" class="btn-submit">
           ثبت در پایگاه داده فضایی
         </button>
       </form>
 
-      <div class="switch-link">
-        قبلاً ثبت‌نام کرده‌اید؟
-        <a href="{% url 'accounts:login' %}">ورود به ایستگاه</a>
+      <div class="auth-divider">
+        <span>یا بازگشت به ورود</span>
+      </div>
+
+      <div class="auth-switch-box">
+        <span>قبلاً ثبت‌نام کرده‌اید؟</span>
+        <a href="{% url 'accounts:login' %}" class="btn-switch-register">
+          <span>🚀</span>
+          <span>ورود به ایستگاه</span>
+        </a>
       </div>
     </div>
+
+    <!-- اسکریپت تعاملات احراز هویت -->
+    <script src="{% static 'accounts/js/auth.js' %}"></script>
   </body>
 </html>
