@@ -5,9 +5,9 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("posts.urls")),  # مسیر فید
-    path("accounts/", include("accounts.urls")),  # فقط اپ اکانتس
-    path("interactions/", include("interactions.urls")),  # فقط اپ تعاملات
+    path("", include("posts.urls")),  # مسیر فید مداری
+    path("accounts/", include("accounts.urls")),  # سیستم کاربری
+    path("interactions/", include("interactions.urls")),  # لایک و کامنت
 ]
 
 if settings.DEBUG:

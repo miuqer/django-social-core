@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import add_comment, toggle_like, post_comments_detail
+from .views import add_comment, post_comments_detail, toggle_like
 
 app_name = "interactions"
 
