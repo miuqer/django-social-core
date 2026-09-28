@@ -3,19 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cosmic Feed | ایستگاه مداری</title>
+    <title>ایستگاه مداری InstaOrbit | فید اصلی</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
     <style>
       :root {
-        --space-black: #060814;
-        --space-deep: #0b0f24;
-        --hull-panel: rgba(16, 23, 48, 0.7);
+        --space-black: #050711;
+        --hull-panel: rgba(16, 23, 48, 0.75);
+        --hull-solid: #0d1226;
         --neon-cyan: #00f0ff;
         --neon-magenta: #ff007f;
-        --neon-purple: #9d4edd;
-        --neon-amber: #ffbe0b;
         --text-glow: #e0f8ff;
         --text-muted: #7b8ba5;
-        --border-glow: rgba(0, 240, 255, 0.25);
+        --border-glow: rgba(0, 240, 255, 0.22);
+        --border-magenta: rgba(255, 0, 127, 0.35);
       }
 
       * {
@@ -23,7 +28,12 @@
         margin: 0;
         padding: 0;
         font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          "Vazirmatn FD",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
       }
 
       body {
@@ -32,527 +42,658 @@
         min-height: 100vh;
         display: flex;
         justify-content: center;
-        padding: 40px 16px;
         background-image:
-          radial-gradient(1px 1px at 25px 35px, #ffffff, transparent),
           radial-gradient(
-            1.5px 1.5px at 120px 80px,
+            1.5px 1.5px at 80px 60px,
             var(--neon-cyan),
             transparent
           ),
-          radial-gradient(1px 1px at 220px 190px, #ffffff, transparent),
           radial-gradient(
-            2px 2px at 340px 120px,
+            2px 2px at 300px 140px,
             var(--neon-magenta),
             transparent
           ),
-          radial-gradient(
-            circle at 15% 20%,
-            rgba(157, 78, 221, 0.2) 0%,
-            transparent 45%
-          ),
-          radial-gradient(
-            circle at 85% 75%,
-            rgba(0, 240, 255, 0.15) 0%,
-            transparent 45%
-          );
-        background-size:
-          400px 400px,
-          500px 500px,
-          350px 350px,
-          600px 600px,
-          cover,
-          cover;
+          radial-gradient(1.5px 1.5px at 600px 320px, #ffffff, transparent);
         background-attachment: fixed;
       }
 
-      .feed-container {
+      .orbit-layout {
+        display: flex;
         width: 100%;
-        max-width: 520px;
+        max-width: 1240px;
+      }
+
+      /* سایدبار ناوبری ایستگاه */
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        border-left: 1px solid var(--border-glow);
+        padding: 28px 18px;
         display: flex;
         flex-direction: column;
-        gap: 32px;
-      }
-
-      .station-header {
-        background: var(--hull-panel);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid var(--border-glow);
-        border-radius: 18px;
-        padding: 16px 22px;
-        display: flex;
-        align-items: center;
         justify-content: space-between;
-        box-shadow: 0 0 25px rgba(0, 240, 255, 0.1);
+        background: rgba(6, 9, 23, 0.65);
+        backdrop-filter: blur(12px);
       }
 
-      .station-logo {
-        font-size: 1.15rem;
+      .brand-orbit {
+        font-size: 1.45rem;
         font-weight: 800;
-        letter-spacing: 1px;
+        color: #fff;
+        text-shadow: 0 0 14px var(--neon-cyan);
+        margin-bottom: 32px;
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #ffffff;
-        text-shadow: 0 0 10px var(--neon-cyan);
       }
 
-      .signal-indicator {
+      .nav-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-item a {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 0.75rem;
-        color: var(--neon-cyan);
-        border: 1px solid rgba(0, 240, 255, 0.3);
-        padding: 5px 12px;
-        border-radius: 20px;
-        background: rgba(0, 240, 255, 0.05);
-      }
-
-      .signal-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: var(--neon-cyan);
-        box-shadow: 0 0 8px var(--neon-cyan);
-        animation: pulse 1.8s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          opacity: 0.4;
-        }
-        50% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0.4;
-        }
-      }
-
-      .system-msg {
-        padding: 10px 16px;
+        gap: 12px;
+        padding: 11px 14px;
         border-radius: 10px;
-        font-size: 0.85rem;
-        border: 1px solid rgba(0, 240, 255, 0.4);
-        background: rgba(0, 240, 255, 0.08);
-        color: var(--neon-cyan);
-        box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.25s ease;
+        border: 1px solid transparent;
       }
 
+      .nav-item a:hover {
+        color: var(--neon-cyan);
+        background: rgba(0, 240, 255, 0.08);
+        border-color: var(--border-glow);
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.12);
+      }
+
+      .nav-item.active a {
+        color: #fff;
+        background: rgba(0, 240, 255, 0.15);
+        border-color: var(--neon-cyan);
+        box-shadow: 0 0 18px rgba(0, 240, 255, 0.25);
+        font-weight: 700;
+      }
+
+      /* فید میانی */
+      .feed-container {
+        flex: 1;
+        max-width: 620px;
+        padding: 24px 16px;
+        margin: 0 auto;
+      }
+
+      /* نوار مخابره‌های زنده (استوری) */
+      .stories-bar {
+        display: flex;
+        gap: 16px;
+        padding: 14px;
+        background: var(--hull-panel);
+        border: 1px solid var(--border-glow);
+        border-radius: 14px;
+        overflow-x: auto;
+        margin-bottom: 24px;
+        backdrop-filter: blur(10px);
+      }
+
+      .stories-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .story-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .story-ring {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        padding: 2px;
+        background: linear-gradient(
+          135deg,
+          var(--neon-cyan),
+          var(--neon-magenta)
+        );
+        box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .story-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid var(--space-black);
+        background-color: var(--hull-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-size: 1.2rem;
+      }
+
+      .story-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .story-username {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        max-width: 65px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* کارت کیهانی پست */
       .cosmic-card {
         background: var(--hull-panel);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
         border: 1px solid var(--border-glow);
-        border-radius: 20px;
+        border-radius: 16px;
+        margin-bottom: 24px;
         overflow: hidden;
-        box-shadow:
-          0 15px 35px rgba(0, 0, 0, 0.6),
-          0 0 20px rgba(0, 240, 255, 0.05);
-        transition:
-          transform 0.25s ease,
-          border-color 0.25s ease,
-          box-shadow 0.25s ease;
-      }
-
-      .cosmic-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(0, 240, 255, 0.5);
-        box-shadow:
-          0 20px 45px rgba(0, 0, 0, 0.8),
-          0 0 30px rgba(0, 240, 255, 0.15);
+        box-shadow: 0 0 24px rgba(0, 240, 255, 0.08);
+        backdrop-filter: blur(14px);
       }
 
       .post-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 14px 18px;
+        padding: 12px 16px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      .explorer-meta {
+      .post-user {
         display: flex;
         align-items: center;
         gap: 12px;
+        text-decoration: none;
+        color: var(--text-glow);
       }
 
-      .helm-avatar {
-        width: 42px;
-        height: 42px;
+      .avatar-small {
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
-        border: 2px solid var(--neon-cyan);
-        box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        border: 1px solid var(--neon-cyan);
+        background-color: var(--hull-solid);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.1rem;
-        background: linear-gradient(135deg, #101c3d, #2b1147);
-        color: #ffffff;
         overflow: hidden;
+        box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
       }
 
-      .helm-avatar img {
+      .avatar-small img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .post-username {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #fff;
+      }
+      .sector-tag {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+      }
+
+      .post-media {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background-color: #03040a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .post-media img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
 
-      .explorer-info h4 {
-        font-size: 0.92rem;
-        font-weight: 700;
-        color: #ffffff;
+      .telemetry-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px 8px 16px;
       }
 
-      .explorer-info span {
-        font-size: 0.72rem;
-        color: var(--neon-cyan);
-        letter-spacing: 0.5px;
-      }
-
-      .transmission-badge {
-        font-size: 0.7rem;
-        padding: 4px 8px;
-        border-radius: 6px;
-        background: rgba(255, 0, 127, 0.1);
-        color: var(--neon-magenta);
-        border: 1px solid rgba(255, 0, 127, 0.3);
-        text-transform: uppercase;
-      }
-
-      .viewport-box {
-        width: 100%;
-        position: relative;
-        background: #020409;
+      .telemetry-left {
         display: flex;
         align-items: center;
-        justify-content: center;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        gap: 14px;
       }
 
-      .viewport-box img {
-        width: 100%;
-        height: auto;
-        max-height: 550px;
-        object-fit: cover;
-        display: block;
-      }
-
-      .viewport-corners {
-        position: absolute;
-        inset: 8px;
-        pointer-events: none;
-        border: 1px dashed rgba(0, 240, 255, 0.15);
-        border-radius: 6px;
-      }
-
-      .log-section {
-        padding: 16px 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .telemetry-row {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        font-size: 1.25rem;
-        padding-bottom: 4px;
-      }
-
-      .telemetry-btn {
+      .btn-telemetry {
         background: none;
         border: none;
+        color: var(--text-glow);
+        font-size: 1.25rem;
         cursor: pointer;
-        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
-        transition: transform 0.15s ease;
+        transition:
+          transform 0.2s,
+          filter 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
       }
 
-      .telemetry-btn:hover {
-        transform: scale(1.15);
+      .btn-telemetry:hover {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 8px var(--neon-magenta));
       }
 
-      .transmission-log {
-        font-size: 0.88rem;
-        line-height: 1.6;
-        color: #d8e4f5;
+      .post-body {
+        padding: 0 16px 16px 16px;
       }
 
-      .log-author {
-        color: var(--neon-cyan);
+      .likes-count {
         font-weight: 700;
+        font-size: 0.82rem;
+        color: var(--neon-cyan);
+        margin-bottom: 8px;
+      }
+
+      .caption-log {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+
+      .caption-user {
+        font-weight: 700;
+        color: #fff;
         margin-left: 6px;
-        text-shadow: 0 0 6px rgba(0, 240, 255, 0.3);
       }
-
       .stardate {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: var(--text-muted);
-        letter-spacing: 0.5px;
+        margin-bottom: 10px;
       }
 
-      /* مدار دیدگاه‌ها و پاسخ‌ها */
+      /* استریم دیدگاه‌ها */
       .frequency-stream {
-        margin-top: 8px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 10px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        max-height: 200px;
-        overflow-y: auto;
-      }
-
-      .stream-title {
-        font-size: 0.75rem;
-        color: var(--neon-purple);
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
+        gap: 6px;
       }
 
       .frequency-msg {
         font-size: 0.8rem;
         line-height: 1.4;
         background: rgba(0, 0, 0, 0.25);
-        padding: 8px 12px;
-        border-radius: 8px;
+        padding: 6px 10px;
+        border-radius: 6px;
         border-right: 2px solid var(--neon-cyan);
       }
 
       .sender-tag {
         color: var(--neon-cyan);
-        font-weight: 600;
+        font-weight: 700;
         margin-left: 6px;
       }
 
-      .signal-form {
-        display: flex;
-        gap: 8px;
-        margin-top: 8px;
+      .all-frequencies-link {
+        font-size: 0.75rem;
+        color: var(--neon-cyan);
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 4px;
+        transition: opacity 0.2s;
       }
 
-      .signal-input {
+      .all-frequencies-link:hover {
+        opacity: 0.8;
+        text-shadow: 0 0 8px var(--neon-cyan);
+      }
+
+      /* فرم ارسال سریع نظر */
+      .frequency-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding-top: 10px;
+      }
+
+      .frequency-input {
         flex: 1;
-        background: rgba(6, 8, 20, 0.8);
-        border: 1px solid rgba(0, 240, 255, 0.3);
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border-glow);
         border-radius: 8px;
         padding: 8px 12px;
-        color: var(--text-glow);
+        color: #fff;
         font-size: 0.8rem;
         outline: none;
-        transition: border-color 0.2s;
       }
 
-      .signal-input:focus {
+      .frequency-input:focus {
         border-color: var(--neon-cyan);
-        box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+        box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
       }
 
-      .signal-submit {
+      .btn-send-signal {
         background: rgba(0, 240, 255, 0.15);
         border: 1px solid var(--neon-cyan);
         color: var(--neon-cyan);
-        padding: 0 14px;
         border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 600;
+        padding: 7px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: 0.2s;
       }
 
-      .signal-submit:hover {
+      .btn-send-signal:hover {
         background: var(--neon-cyan);
         color: #000;
-        box-shadow: 0 0 12px var(--neon-cyan);
+        box-shadow: 0 0 10px var(--neon-cyan);
       }
 
-      .empty-space {
+      /* سایدبار پروفایل سمت چپ */
+      .sidebar-right {
+        width: 300px;
+        padding: 30px 18px;
+        display: none;
+      }
+
+      @media (min-width: 1050px) {
+        .sidebar-right {
+          display: block;
+        }
+      }
+
+      .current-user-card {
         background: var(--hull-panel);
-        border: 1px dashed var(--border-glow);
-        border-radius: 20px;
-        padding: 60px 20px;
-        text-align: center;
+        border: 1px solid var(--border-glow);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        backdrop-filter: blur(12px);
       }
 
-      .empty-space h3 {
-        color: var(--neon-cyan);
-        margin-bottom: 8px;
-        font-size: 1.2rem;
+      .user-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
-
-      .empty-space p {
+      .user-text h4 {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .user-text span {
+        font-size: 0.75rem;
         color: var(--text-muted);
-        font-size: 0.85rem;
+        display: block;
+      }
+      .btn-manage {
+        color: var(--neon-cyan);
+        font-size: 0.75rem;
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .btn-manage:hover {
+        text-shadow: 0 0 8px var(--neon-cyan);
       }
     </style>
   </head>
   <body>
-    <div class="feed-container">
-      <header class="station-header">
-        <div class="station-logo">
-          <span>🛰️</span>
-          <span>شبکه مداری اینستاگرام</span>
+    <div class="orbit-layout">
+      <!-- منوی ناوبری ایستگاه مداری -->
+      <aside class="sidebar">
+        <div>
+          <div class="brand-orbit">
+            <span>🛰️</span>
+            <span>InstaOrbit</span>
+          </div>
+
+          <ul class="nav-links">
+            <li class="nav-item active">
+              <a href="{% url 'posts:feed' %}">🏠 فید اصلی</a>
+            </li>
+            <li class="nav-item"><a href="#">🔍 اسکن و جستجو</a></li>
+            <li class="nav-item"><a href="#">🧭 کاوش مداری</a></li>
+            <li class="nav-item"><a href="#">💬 پیام‌های مستقیم</a></li>
+            <li class="nav-item"><a href="#">➕ مخابره پست جدید</a></li>
+            <li class="nav-item">
+              <a href="{% url 'accounts:profile' %}">👤 نمایه پایگاه</a>
+            </li>
+          </ul>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px">
-          <span style="font-size: 0.8rem; color: var(--neon-cyan)">
-            👨‍🚀 {{ request.user.username }}
-          </span>
+
+        <div class="nav-item">
           <a
             href="{% url 'accounts:logout' %}"
             style="
-              text-decoration: none;
-              font-size: 0.75rem;
-              padding: 4px 10px;
-              border-radius: 6px;
-              border: 1px solid var(--neon-magenta);
               color: var(--neon-magenta);
-              background: rgba(255, 0, 127, 0.1);
+              border-color: var(--border-magenta);
             "
           >
-            قطع اتصال (خروج)
+            🚪 قطع نشست (خروج)
           </a>
         </div>
-      </header>
+      </aside>
 
-      {% if messages %} {% for msg in messages %}
-      <div class="system-msg">{{ msg }}</div>
-      {% endfor %} {% endif %} {% for post in posts %}
-      <article class="cosmic-card">
-        <header class="post-header">
-          <div class="explorer-meta">
-            <div class="helm-avatar">
-              {% if post.author.profile.avatar %}
-              <img
-                src="{{ post.author.profile.avatar.url }}"
-                alt="{{ post.author.username }}"
-              />
-              {% else %} 👨‍🚀 {% endif %}
+      <!-- فید مرکزی -->
+      <main class="feed-container">
+        <!-- نوار مخابره‌های زنده (Stories) -->
+        <div class="stories-bar">
+          <!-- استوری فضانورد لاگین‌شده -->
+          <div class="story-item">
+            <div class="story-ring">
+              <div class="story-avatar">
+                {% if request.user.profile.avatar %}
+                <img
+                  src="{{ request.user.profile.avatar.url }}"
+                  alt="{{ request.user.username }}"
+                />
+                {% else %} 👨‍🚀 {% endif %}
+              </div>
             </div>
-            <div class="explorer-info">
-              <h4>{{ post.author.username }}</h4>
-              <span>بخش مداری #{{ post.id }}</span>
-            </div>
+            <span class="story-username">شما</span>
           </div>
-          <span class="transmission-badge">ارسال داده</span>
-        </header>
 
-        <div class="viewport-box">
-          <div class="viewport-corners"></div>
-          {% if post.image %}
-          <img
-            src="{{ post.image.url }}"
-            alt="تصویر ارسالی {{ post.author.username }}"
-          />
-          {% endif %}
+          <!-- نمونه استوری سایر مدارها -->
+          <div class="story-item">
+            <div class="story-ring">
+              <div class="story-avatar">🛰️</div>
+            </div>
+            <span class="story-username">Apollo_X</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring">
+              <div class="story-avatar">🪐</div>
+            </div>
+            <span class="story-username">Cosmos_1</span>
+          </div>
+          <div class="story-item">
+            <div class="story-ring">
+              <div class="story-avatar">📡</div>
+            </div>
+            <span class="story-username">Radio_Deep</span>
+          </div>
         </div>
 
-        <div class="log-section">
-          <div class="telemetry-row">
-            <!-- دکمه و شمارنده تپش هسته (لایک) -->
-            <form
-              action="{% url 'interactions:toggle_like' post.id %}"
-              method="POST"
-              style="
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                margin: 0;
-              "
-            >
-              {% csrf_token %}
-              <button
-                type="submit"
-                class="telemetry-btn"
-                title="تپش هسته (لایک)"
-              >
-                ⚡
-              </button>
-              <span
-                style="
-                  font-size: 0.8rem;
-                  color: var(--neon-cyan);
-                  font-weight: 600;
-                "
-              >
-                {{ post.total_likes }} تپش
-              </span>
-            </form>
-          </div>
-
-          {% if post.caption %}
-          <div class="transmission-log">
-            <span class="log-author">{{ post.author.username }}:</span>
-            {{ post.caption }}
-          </div>
-          {% endif %}
-
-          <div class="stardate">
-            زمان مدار: {{ post.created_at|date:"Y-m-d // H:i" }}
-          </div>
-
-          <!-- بخش مخابره فرکانس‌ها (کامنت‌ها) -->
-          <div class="frequency-stream">
-            <span class="stream-title">فرکانس‌های دریافتی</span>
-            {% for comment in post.recent_comments %}
-            <div class="frequency-msg">
-              <span class="sender-tag">{{ comment.author.username }}:</span>
-              <span>{{ comment.text }}</span>
-            </div>
-            {% empty %}
-            <span style="font-size: 0.75rem; color: var(--text-muted)">
-              هیچ سیگنالی برای این مخابره ثبت نشده است.
-            </span>
-            {% endfor %} 
-            {% if post.comments.count > 3 %}
-            <a
-              href="{% url 'interactions:post_comments_detail' post.id %}"
-              style="
-                font-size: 0.75rem;
-                color: var(--neon-cyan);
-                text-decoration: none;
-                display: inline-block;
-                margin-top: 6px;
-              "
-            >
-              مشاهده تمام مخابره‌ها ({{ post.comments.count }}) 🛰️
+        <!-- کارت‌های پست -->
+        {% for post in posts %}
+        <article class="cosmic-card">
+          <header class="post-header">
+            <a href="#" class="post-user">
+              <div class="avatar-small">
+                {% if post.author.profile.avatar %}
+                <img
+                  src="{{ post.author.profile.avatar.url }}"
+                  alt="{{ post.author.username }}"
+                />
+                {% else %} 👨‍🚀 {% endif %}
+              </div>
+              <div>
+                <div class="post-username">{{ post.author.username }}</div>
+                <span class="sector-tag">بخش مداری #{{ post.id }}</span>
+              </div>
             </a>
+            <span style="color: var(--text-muted); cursor: pointer">•••</span>
+          </header>
+
+          <div class="post-media">
+            {% if post.image %}
+            <img src="{{ post.image.url }}" alt="تصویر مداری #{{ post.id }}" />
+            {% else %}
+            <span style="color: var(--text-muted); font-size: 0.85rem"
+              >[داده تصویری ناموجود]</span
+            >
             {% endif %}
           </div>
 
-          <!-- فرم ثبت فرکانس (ارسال کامنت) -->
-          <form
-            class="signal-form"
-            action="{% url 'interactions:add_comment' post.id %}"
-            method="POST"
+          <!-- تعاملات مداری (لایک و نظرات) -->
+          <div class="telemetry-actions">
+            <div class="telemetry-left">
+              <form
+                action="{% url 'interactions:toggle_like' post.id %}"
+                method="POST"
+                style="margin: 0"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="btn-telemetry"
+                  title="تپش هسته (لایک)"
+                >
+                  ⚡
+                </button>
+              </form>
+              <a
+                href="{% url 'interactions:post_comments_detail' post.id %}"
+                class="btn-telemetry"
+                title="دیدگاه‌ها"
+                style="text-decoration: none"
+              >
+                💬
+              </a>
+              <button class="btn-telemetry" title="رله فرکانس (ارسال)">
+                🚀
+              </button>
+            </div>
+            <button class="btn-telemetry" title="ذخیره در هسته">🔖</button>
+          </div>
+
+          <div class="post-body">
+            <div class="likes-count">{{ post.likes.count }} تپش هسته</div>
+
+            {% if post.caption %}
+            <div class="caption-log">
+              <span class="caption-user">{{ post.author.username }}:</span>
+              <span>{{ post.caption }}</span>
+            </div>
+            {% endif %}
+
+            <div class="stardate">
+              زمان مدار: {{ post.created_at|date:"Y-m-d // H:i" }}
+            </div>
+
+            <!-- مخابره‌های دریافتی اخیر -->
+            <div class="frequency-stream">
+              {% for comment in post.recent_comments %}
+              <div class="frequency-msg">
+                <span class="sender-tag">{{ comment.author.username }}:</span>
+                <span>{{ comment.text }}</span>
+              </div>
+              {% empty %}
+              <span style="font-size: 0.72rem; color: var(--text-muted)">
+                هیچ سیگنالی برای این مخابره ثبت نشده است.
+              </span>
+              {% endfor %} {% if post.comments.count > 3 %}
+              <a
+                href="{% url 'interactions:post_comments_detail' post.id %}"
+                class="all-frequencies-link"
+              >
+                مشاهده تمام مخابره‌ها ({{ post.comments.count }}) 🛰️
+              </a>
+              {% endif %}
+            </div>
+
+            <!-- فرم ارسال سیگنال دیدگاه -->
+            <form
+              class="frequency-form"
+              action="{% url 'interactions:add_comment' post.id %}"
+              method="POST"
+            >
+              {% csrf_token %}
+              <input
+                type="text"
+                name="text"
+                class="frequency-input"
+                placeholder="فرکانس جدید خود را مخابره کنید..."
+                autocomplete="off"
+                required
+              />
+              <button type="submit" class="btn-send-signal">ارسال</button>
+            </form>
+          </div>
+        </article>
+        {% empty %}
+        <div class="cosmic-card" style="padding: 40px; text-align: center">
+          <p style="color: var(--neon-cyan); margin-bottom: 8px">
+            🛰️ مدار خالی است
+          </p>
+          <span style="font-size: 0.8rem; color: var(--text-muted)"
+            >هنوز هیچ داده‌ای به فید ارسال نشده است.</span
           >
-            {% csrf_token %}
-            <input
-              type="text"
-              name="text"
-              class="signal-input"
-              placeholder="مخابره پیام به این مدار..."
-              autocomplete="off"
-              required
-            />
-            <button type="submit" class="signal-submit">ارسال</button>
-          </form>
         </div>
-      </article>
-      {% empty %}
-      <div class="empty-space">
-        <div style="font-size: 3rem; margin-bottom: 12px">🪐</div>
-        <h3>سکوت مطلق در فضا!</h3>
-        <p>
-          هیچ سیگنالی شناسایی نشد؛ از پنل ادمین اولین مخابره کیهانی را ثبت کنید.
-        </p>
-      </div>
-      {% endfor %}
+        {% endfor %}
+      </main>
+
+      <!-- سایدبار هویتی سمت چپ -->
+      <aside class="sidebar-right">
+        <div class="current-user-card">
+          <div class="user-meta">
+            <div class="avatar-small">
+              {% if request.user.profile.avatar %}
+              <img
+                src="{{ request.user.profile.avatar.url }}"
+                alt="{{ request.user.username }}"
+              />
+              {% else %} 👨‍🚀 {% endif %}
+            </div>
+            <div class="user-text">
+              <h4>{{ request.user.username }}</h4>
+              <span
+                >{{ request.user.profile.full_name|default:"فضانورد بدون نام"
+                }}</span
+              >
+            </div>
+          </div>
+          <a href="{% url 'accounts:profile' %}" class="btn-manage">تنظیمات</a>
+        </div>
+      </aside>
     </div>
   </body>
 </html>

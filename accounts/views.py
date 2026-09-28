@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
-from .models import MyUser
+from .models import MyUser, Profile
 
 
 def register_view(request):
@@ -101,3 +101,61 @@ def logout_view(request):
     logout(request)
     messages.success(request, "ارتباط با ایستگاه فضایی قطع شد. با موفقیت خارج شدید.")
     return redirect("accounts:login")
+
+
+def profile_view(request):
+    # ۱. بررسی ورود کاربر
+    if not request.user.is_authenticated:
+        return redirect("accounts:login")
+
+    # ۲. واکشی یا ساخت ایمن رکورد پروفایل
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    # ۳. کلیه عملیات دریافت، اعتبارسنجی و ذخیره فقط در درخواست POST
+    if request.method == "POST":
+        full_name = request.POST.get("full_name", "").strip()
+        phone_number = request.POST.get("phone_number", "").strip()
+        email = request.POST.get("email", "").strip()
+        bio = request.POST.get("bio", "").strip()
+        avatar_image = request.FILES.get("avatar")
+
+        # اعتبارسنجی عدم تکرار شماره تماس برای دیگران
+        if (
+            phone_number
+            and MyUser.objects.filter(phone_number=phone_number)
+            .exclude(id=request.user.id)
+            .exists()
+        ):
+            messages.error(request, "این شماره تماس متعلق به فرکانس دیگری است.")
+            return render(request, "accounts/profile.html")
+
+        # اعتبارسنجی عدم تکرار ایمیل برای دیگران
+        if (
+            email
+            and MyUser.objects.filter(email=email).exclude(id=request.user.id).exists()
+        ):
+            messages.error(request, "این آدرس ایمیل قبلاً در مدار ثبت شده است.")
+            return render(request, "accounts/profile.html")
+
+        # ذخیره داده‌های مدل کاربری (MyUser)
+        user = request.user
+        if email:
+            user.email = email
+        if phone_number:
+            user.phone_number = phone_number
+        user.save()
+
+        # ذخیره داده‌های نمایه (Profile)
+        if full_name:
+            profile.full_name = full_name
+        if bio:
+            profile.bio = bio
+        if avatar_image:
+            profile.avatar = avatar_image
+        profile.save()
+
+        messages.success(request, "اطلاعات هویتی و پایگاه شما با موفقیت ثبت شد.")
+        return redirect("accounts:profile")
+
+    # ۴. در درخواست GET صرفاً صفحه پروفایل نمایش داده می‌شود
+    return render(request, "accounts/profile.html")
