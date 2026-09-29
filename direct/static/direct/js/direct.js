@@ -205,21 +205,67 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSidebarPreview(roomId, data.message, timeStr);
   }
 
-  // ۶. ارسال پیام هنگام سابمیت فرم
+  // ۶. ارسال پیام هنگام سابمیت فرم (ارسال دوگانه: وب‌سوکت آنی + فال‌بک خودکار HTTP)
   if (chatForm && chatInput) {
     chatForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const message = chatInput.value.trim();
       if (!message) return;
 
-      if (!chatSocket || chatSocket.readyState !== WebSocket.OPEN) {
-        alert("ارتباط با سرور مداری در حال حاضر قطع است. لطفاً کمی صبر کنید.");
+      // ۱. اگر وب‌سوکت باز و متصل است، پیام با وب‌سوکت آنی مخابره شود
+      if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        chatSocket.send(JSON.stringify({ message: message }));
+        chatInput.value = "";
+        chatInput.focus();
         return;
       }
 
-      chatSocket.send(JSON.stringify({ message: message }));
-      chatInput.value = "";
-      chatInput.focus();
+      // ۲. در صورتی که وب‌سوکت قطع باشد، ارسال بدون وقفه با AJAX HTTP انجام گیرد
+      const submitBtn = document.getElementById("chat-message-submit");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.7";
+      }
+
+      const formData = new FormData(chatForm);
+      formData.set("text", message);
+
+      const actionUrl = chatForm.action || `/direct/room/${roomId}/send/`;
+
+      fetch(actionUrl, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("خطا در ارسال پیام");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+          }
+          if (data.status === "ok") {
+            chatInput.value = "";
+            chatInput.focus();
+            renderIncomingMessage(data);
+          } else {
+            alert(data.error || "خطا در ارسال پیام.");
+          }
+        })
+        .catch((err) => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+          }
+          // فال‌بک نهایی در صورت قطع کامل شبکه
+          chatForm.submit();
+        });
     });
 
     // ارسال با اینتر (بدون شیفت)

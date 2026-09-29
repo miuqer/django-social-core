@@ -179,25 +179,48 @@
               ➔
             </button>
 
-            <div class="partner-avatar">
-              {% if other_user and other_user.profile.avatar %}
+            {% if other_user %}
+            <a href="{% url 'accounts:user_profile' other_user.username %}" class="partner-avatar" style="text-decoration: none;" title="مشاهده نمایه فضانورد">
+              {% if other_user.profile.avatar %}
               <img src="{{ other_user.profile.avatar.url }}" alt="{{ other_user.username }}" />
               {% else %}
               👨‍🚀
               {% endif %}
-            </div>
+            </a>
 
             <div class="partner-names">
-              <h3>{{ other_user.username|default:"اتاق مداری" }}</h3>
+              <a href="{% url 'accounts:user_profile' other_user.username %}" style="text-decoration: none; color: inherit;">
+                <h3>{{ other_user.username }}</h3>
+              </a>
               <div class="partner-status" id="ws-status-badge">
                 <span class="status-pulse-dot"></span>
                 <span class="status-text">سیگنال برقرار</span>
               </div>
             </div>
+            {% else %}
+            <div class="partner-avatar">
+              👨‍🚀
+            </div>
+
+            <div class="partner-names">
+              <h3>اتاق مداری</h3>
+              <div class="partner-status" id="ws-status-badge">
+                <span class="status-pulse-dot"></span>
+                <span class="status-text">سیگنال برقرار</span>
+              </div>
+            </div>
+            {% endif %}
           </div>
 
           <div class="chat-header-actions">
             {% if other_user %}
+            <a
+              href="{% url 'accounts:user_profile' other_user.username %}"
+              class="btn-chat-action"
+              title="مشاهده نمایه فضانورد {{ other_user.username }}"
+            >
+              👤
+            </a>
             <a
               href="{% url 'accounts:toggle_follow' other_user.id %}"
               class="btn-chat-action"
@@ -264,9 +287,16 @@
             <span class="emoji-pill" data-emoji="🛰️">🛰️</span>
           </div>
 
-          <form class="chat-input-form" id="chat-form">
+          <form
+            class="chat-input-form"
+            id="chat-form"
+            action="{% if room %}{% url 'direct:send_message' room.id %}{% endif %}"
+            method="POST"
+          >
+            {% csrf_token %}
             <input
               type="text"
+              name="text"
               id="chat-message-input"
               class="chat-text-input"
               placeholder="پیام خود را مخابره کنید... (Enter برای ارسال)"

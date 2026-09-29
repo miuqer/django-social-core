@@ -287,3 +287,29 @@ def password_reset_confirm_view(request, uidb64, token):
     return render(
         request, "accounts/password_reset_confirm.html", {"validlink": validlink}
     )
+
+
+def user_profile_view(request, username):
+    # ۱. واکشی کاربر هدف
+    target_user = get_object_or_404(MyUser, username=username)
+
+    # ۲. بررسی وضعیت دنبال‌شدن
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = Follow.objects.filter(
+            follower=request.user, following=target_user
+        ).exists()
+
+    # ۳. دریافت پست‌ها و آمارها
+    posts = target_user.posts.all().order_by("-created_at")
+
+    context = {
+        "target_user": target_user,
+        "posts": posts,
+        "posts_count": posts.count(),
+        "followers_count": target_user.follower_relations.count(),
+        "following_count": target_user.following_relations.count(),
+        "is_following": is_following,
+    }
+
+    return render(request, "accounts/user_profile.html", context)

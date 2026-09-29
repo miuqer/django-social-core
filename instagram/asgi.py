@@ -1,12 +1,12 @@
 import os
-from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
-import direct.routing
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "instagram.settings")
-
 django_asgi_app = get_asgi_application()
+
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+import direct.routing
 
 application = ProtocolTypeRouter(
     {

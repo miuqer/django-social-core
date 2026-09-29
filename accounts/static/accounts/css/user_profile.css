@@ -1,0 +1,510 @@
+/* ==========================================================================
+   InstaOrbit - Public User Profile Styling
+   ========================================================================== */
+
+body.user-profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 24px 16px 60px 16px;
+  background-color: var(--space-black);
+  background-image: var(--bg-stars);
+  background-attachment: fixed;
+  background-repeat: repeat;
+  color: var(--text-glow);
+}
+
+.user-profile-wrapper {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ۱. نوار ناوبری بالا */
+.user-profile-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.user-profile-nav a.btn-nav-back {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.user-profile-nav a.btn-nav-back:hover {
+  text-shadow: 0 0 8px var(--accent-primary);
+  transform: translateX(3px);
+}
+
+.nav-user-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ۲. کارت هیرو نمایه فضانورد */
+.user-profile-hero-card {
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 32px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), var(--glow-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-profile-hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ring-gradient);
+}
+
+.hero-main-row {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.hero-avatar-orbit {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hero-avatar-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2.5px solid var(--accent-primary);
+  background: var(--hull-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 2.8rem;
+  box-shadow: var(--glow-shadow), 0 0 20px rgba(0, 245, 155, 0.2);
+}
+
+.hero-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-info-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.hero-names-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-username-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.hero-fullname-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.badge-self-orbit {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glow);
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+/* آمار تلمتری فضانورد */
+.hero-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+.hero-stat-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.stat-number {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* بیوگرافی و لاگ فضانورد */
+.hero-bio-container {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+.hero-bio-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-glow);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.hero-bio-empty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* دکمه‌های اکشن نمایه */
+.hero-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+}
+
+.btn-profile-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+
+.btn-profile-chat {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-glow);
+}
+
+.btn-profile-chat:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  transform: translateY(-1px);
+}
+
+.btn-manage-profile {
+  background: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+  color: #000;
+  font-weight: 800;
+}
+
+.btn-manage-profile:hover {
+  filter: brightness(1.15);
+  box-shadow: var(--glow-strong);
+  transform: translateY(-1px);
+}
+
+.btn-new-post {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glow);
+  color: var(--accent-primary);
+}
+
+.btn-new-post:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: var(--glow-shadow);
+  transform: translateY(-1px);
+}
+
+.btn-login-prompt {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.btn-login-prompt:hover {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: var(--glow-strong);
+}
+
+/* دکمه اتصال مداری (فالو) */
+.btn-orbit-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+  color: #000;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn-orbit-follow:hover {
+  filter: brightness(1.15);
+  box-shadow: var(--glow-strong);
+  transform: translateY(-1px);
+}
+
+.btn-orbit-follow.following {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.btn-orbit-follow.following:hover {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.45);
+  color: var(--accent-danger);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+}
+
+/* ۳. بخش گالری و شبکه پست‌ها */
+.user-posts-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.section-tab-header h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.post-grid-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--hull-solid);
+  border: 1px solid var(--border-subtle);
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.post-grid-item:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+  transform: translateY(-3px);
+}
+
+.post-grid-item:hover img {
+  transform: scale(1.06);
+}
+
+/* کارت پست متنی بدون عکس در گرید */
+.text-post-card-preview {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.04), transparent), var(--hull-panel);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.text-post-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px var(--accent-primary));
+}
+
+.text-post-caption-snippet {
+  font-size: 0.76rem;
+  color: var(--text-glow);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+/* هاور لایه تلمتری روی پست */
+.post-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 5;
+}
+
+.post-grid-item:hover .post-grid-overlay {
+  opacity: 1;
+}
+
+.overlay-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+/* حالت خالی گرید پست‌ها */
+.posts-grid-empty {
+  padding: 60px 20px;
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-grid-icon {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 0 20px var(--accent-primary));
+}
+
+.posts-grid-empty h4 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.posts-grid-empty p {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* واکنش‌گرایی در نمایشگرهای کوچک */
+@media (max-width: 720px) {
+  .hero-main-row {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .hero-names-group {
+    justify-content: center;
+  }
+
+  .hero-stats-row {
+    justify-content: center;
+  }
+
+  .hero-actions-row {
+    justify-content: center;
+  }
+
+  .posts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-avatar-circle {
+    width: 80px;
+    height: 80px;
+    font-size: 2.2rem;
+  }
+
+  .hero-username-title {
+    font-size: 1.25rem;
+  }
+
+  .posts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}

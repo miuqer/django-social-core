@@ -1,0 +1,192 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="aurora">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نمایه مداری @{{ target_user.username }} | InstaOrbit</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'accounts/css/user_profile.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
+    <script>
+      {% if request.user.is_authenticated %}
+      window.currentFollowingIds = [{% for rel in request.user.following_relations.all %}{{ rel.following.id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      window.currentLikedPostIds = [{% for like in request.user.user_likes.all %}{{ like.post_id }}{% if not forloop.last %},{% endif %}{% endfor %}];
+      {% else %}
+      window.currentFollowingIds = [];
+      window.currentLikedPostIds = [];
+      {% endif %}
+    </script>
+  </head>
+  <body class="user-profile-page">
+    <div class="user-profile-wrapper">
+      <!-- ۱. نوار ناوبری شیشه‌ای بالا -->
+      <nav class="user-profile-nav">
+        <a href="{% url 'posts:feed' %}" class="btn-nav-back">
+          <span>←</span>
+          <span>بازگشت به فید پایگاه</span>
+        </a>
+
+        <div class="nav-user-title">
+          <span>🛰️</span>
+          <span>پایگاه فضانورد @{{ target_user.username }}</span>
+        </div>
+
+        <!-- انتخابگر تم ۴ رنگی -->
+        <div class="theme-dots-row">
+          <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
+          <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
+          <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
+        </div>
+      </nav>
+
+      <!-- ۲. کارت هیرو و مشخصات فضانورد -->
+      <header class="user-profile-hero-card">
+        <div class="hero-main-row">
+          <div class="hero-avatar-orbit">
+            <div class="hero-avatar-circle">
+              {% if target_user.profile.avatar %}
+              <img src="{{ target_user.profile.avatar.url }}" alt="{{ target_user.username }}" />
+              {% else %}
+              👨‍🚀
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="hero-info-column">
+            <div class="hero-names-group">
+              <h1 class="hero-username-title">{{ target_user.username }}</h1>
+              <span class="hero-fullname-label">{{ target_user.profile.full_name|default:"فضانورد بدون نام" }}</span>
+              {% if request.user == target_user %}
+              <span class="badge-self-orbit">مدار شخصی شما 🛰️</span>
+              {% endif %}
+            </div>
+
+            <!-- آمار تلمتری فضانورد -->
+            <div class="hero-stats-row">
+              <div class="hero-stat-item">
+                <span class="stat-number">{{ posts_count }}</span>
+                <span class="stat-label">مخابره</span>
+              </div>
+              <div class="hero-stat-item">
+                <span class="stat-number">{{ followers_count }}</span>
+                <span class="stat-label">دنبال‌کننده</span>
+              </div>
+              <div class="hero-stat-item">
+                <span class="stat-number">{{ following_count }}</span>
+                <span class="stat-label">دنبال‌شونده</span>
+              </div>
+            </div>
+
+            <!-- بیوگرافی و لاگ ایستگاه -->
+            <div class="hero-bio-container">
+              {% if target_user.profile.bio %}
+              <p class="hero-bio-text">{{ target_user.profile.bio }}</p>
+              {% else %}
+              <p class="hero-bio-empty">هنوز هیچ بیوگرافی یا توضیحی برای این مدار ثبت نشده است.</p>
+              {% endif %}
+            </div>
+
+            <!-- دکمه‌های اقدام و تعامل -->
+            <div class="hero-actions-row">
+              {% if request.user.is_authenticated %}
+                {% if request.user == target_user %}
+                <a href="{% url 'accounts:profile' %}" class="btn-profile-action btn-manage-profile">
+                  <span>⚙️</span>
+                  <span>تنظیمات و ویرایش پایگاه</span>
+                </a>
+                <a href="{% url 'posts:create_post' %}" class="btn-profile-action btn-new-post">
+                  <span>➕</span>
+                  <span>مخابره پست جدید</span>
+                </a>
+                {% else %}
+                <a
+                  href="{% url 'accounts:toggle_follow' target_user.id %}"
+                  class="btn-orbit-follow {% if is_following %}following{% endif %}"
+                  data-target-user-id="{{ target_user.id }}"
+                >
+                  <span class="follow-icon">{% if is_following %}✓{% else %}+{% endif %}</span>
+                  <span class="follow-label">{% if is_following %}در مدار{% else %}اتصال به مدار{% endif %}</span>
+                </a>
+
+                <a href="{% url 'direct:start_chat' target_user.id %}" class="btn-profile-action btn-profile-chat">
+                  <span>💬</span>
+                  <span>مخابره مستقیم (چت)</span>
+                </a>
+                {% endif %}
+              {% else %}
+              <a href="{% url 'accounts:login' %}" class="btn-profile-action btn-login-prompt">
+                <span>🚀</span>
+                <span>جهت اتصال به این مدار یا ارسال پیام، وارد شوید</span>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ۳. بخش شبکه پست‌ها و گالری مخابره‌ها -->
+      <main class="user-posts-section">
+        <div class="section-tab-header">
+          <h3>
+            <span>🖼️</span>
+            <span>تمام مخابره‌های ثبت‌شده ({{ posts_count }})</span>
+          </h3>
+        </div>
+
+        {% if posts %}
+        <div class="posts-grid">
+          {% for post in posts %}
+          <a
+            href="{% url 'interactions:post_comments_detail' post.id %}"
+            class="post-grid-item"
+            title="مشاهده مخابره #{{ post.id }}"
+          >
+            {% if post.image %}
+            <img src="{{ post.image.url }}" alt="پست #{{ post.id }}" loading="lazy" />
+            {% else %}
+            <div class="text-post-card-preview">
+              <span class="text-post-icon">🪐</span>
+              <p class="text-post-caption-snippet">{{ post.caption|default:"مخابره متنی مداری" }}</p>
+            </div>
+            {% endif %}
+
+            <div class="post-grid-overlay">
+              <span class="overlay-stat">
+                <span>⚡</span>
+                <span>{{ post.likes.count }}</span>
+              </span>
+              <span class="overlay-stat">
+                <span>💬</span>
+                <span>{{ post.comments.count }}</span>
+              </span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="posts-grid-empty">
+          <span class="empty-grid-icon">🌌</span>
+          <h4>مدار این فضانورد فاقد مخابره تصویری است</h4>
+          <p>هنوز هیچ داده یا پستی در فرکانس این کاربر منتشر نشده است.</p>
+          {% if request.user == target_user %}
+          <a href="{% url 'posts:create_post' %}" class="btn-profile-action btn-new-post" style="margin-top: 8px;">
+            <span>➕</span>
+            <span>ارسال اولین مخابره به مدار</span>
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </main>
+    </div>
+
+    <!-- اسکریپت فالو و تعاملات AJAX -->
+    <script src="{% static 'posts/js/feed.js' %}"></script>
+  </body>
+</html>

@@ -63,15 +63,15 @@
         <!-- هدر نویسنده پست -->
         <header class="post-header-row">
           <div class="post-author-info">
-            <div class="post-author-avatar">
+            <a href="{% url 'accounts:user_profile' post.author.username %}" class="post-author-avatar" style="text-decoration: none;">
               {% if post.author.profile.avatar %}
               <img src="{{ post.author.profile.avatar.url }}" alt="{{ post.author.username }}" />
               {% else %}
               👨‍🚀
               {% endif %}
-            </div>
+            </a>
             <div class="post-author-texts">
-              <a href="{% if post.author == request.user %}{% url 'accounts:profile' %}{% else %}#{% endif %}" class="post-author-username">
+              <a href="{% url 'accounts:user_profile' post.author.username %}" class="post-author-username">
                 {{ post.author.username }}
               </a>
               <span class="post-author-subline">
@@ -145,10 +145,11 @@
             <button
               type="button"
               class="btn-telemetry"
+              id="btn-comments-focus"
               onclick="var inp = document.getElementById('detail-comment-input'); if(inp){ inp.focus(); inp.scrollIntoView({behavior: 'smooth', block: 'center'}); }"
               title="نوشتن دیدگاه"
             >
-              💬 {{ comments.count }}
+              💬 <span id="post-meta-comments-count">{{ total_comments_count|default:post.comments.count }}</span>
             </button>
 
             {% if request.user.is_authenticated and post.author != request.user %}
@@ -173,81 +174,176 @@
         <header class="stream-card-header">
           <h3>
             <span>💬</span>
-            <span>تمام مخابره‌های دریافتی ({{ comments.count }})</span>
+            <span>تمام مخابره‌های دریافتی (<span id="total-comments-counter">{{ total_comments_count|default:post.comments.count }}</span>)</span>
           </h3>
           <span style="font-size: 0.74rem; color: var(--text-muted);">
             {{ post.created_at|date:"Y-m-d" }}
           </span>
         </header>
 
-        <!-- لیست دیدگاه‌ها -->
+        <!-- لیست دیدگاه‌ها و رشته‌های پاسخ -->
         <div class="comments-list" id="comments-list-box">
           {% for comment in comments %}
-          <div class="comment-item">
-            <div class="comment-avatar">
-              {% if comment.author.profile.avatar %}
-              <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}" />
-              {% else %}
-              👨‍🚀
-              {% endif %}
+          <div class="comment-thread-group" id="comment-thread-{{ comment.id }}">
+            <!-- دیدگاه اصلی -->
+            <div class="comment-item" id="comment-node-{{ comment.id }}" data-comment-id="{{ comment.id }}">
+              <a href="{% url 'accounts:user_profile' comment.author.username %}" class="comment-avatar" style="text-decoration: none;">
+                {% if comment.author.profile.avatar %}
+                <img src="{{ comment.author.profile.avatar.url }}" alt="{{ comment.author.username }}" />
+                {% else %}
+                👨‍🚀
+                {% endif %}
+              </a>
+
+              <div class="comment-body">
+                <div class="comment-header">
+                  <a href="{% url 'accounts:user_profile' comment.author.username %}" class="comment-author-name" style="text-decoration: none;">
+                    <span>{{ comment.author.username }}</span>
+                    {% if comment.author == post.author %}
+                    <span class="badge-op">پدیدآورنده</span>
+                    {% endif %}
+                  </a>
+                  <span class="comment-time">
+                    {{ comment.created_at|date:"Y-m-d // H:i" }}
+                  </span>
+                </div>
+
+                <div class="comment-text">{{ comment.text }}</div>
+
+                <div class="comment-actions-row">
+                  <button
+                    type="button"
+                    class="btn-comment-reply"
+                    data-comment-id="{{ comment.id }}"
+                    data-username="{{ comment.author.username }}"
+                  >
+                    پاسخ ↩
+                  </button>
+
+                  {% if request.user.is_authenticated and comment.author != request.user %}
+                  <a
+                    href="{% url 'direct:start_chat' comment.author.id %}"
+                    class="btn-comment-direct"
+                    title="مخابره مستقیم به این کاربر"
+                  >
+                    💬 مخابره
+                  </a>
+                  {% endif %}
+
+                  {% if request.user.is_authenticated and comment.author == request.user or post.author == request.user %}
+                  <form
+                    action="{% url 'interactions:delete_comment' comment.id %}"
+                    method="POST"
+                    class="delete-comment-form"
+                    style="margin: 0; display: inline;"
+                  >
+                    {% csrf_token %}
+                    <button
+                      type="submit"
+                      class="btn-comment-delete"
+                      title="حذف این دیدگاه"
+                      data-comment-id="{{ comment.id }}"
+                    >
+                      🗑️ حذف
+                    </button>
+                  </form>
+                  {% endif %}
+                </div>
+              </div>
             </div>
 
-            <div class="comment-body">
-              <div class="comment-header">
-                <span class="comment-author-name">
-                  <span>{{ comment.author.username }}</span>
-                  {% if comment.author == post.author %}
-                  <span class="badge-op">پدیدآورنده</span>
-                  {% endif %}
-                </span>
-                <span class="comment-time">
-                  {{ comment.created_at|date:"Y-m-d // H:i" }}
-                </span>
-              </div>
+            <!-- بخش رشته پاسخ‌های متصل -->
+            <div class="replies-wrapper" id="replies-wrapper-{{ comment.id }}">
+              {% if comment.replies.all %}
+              <button
+                type="button"
+                class="btn-toggle-replies"
+                data-target="replies-box-{{ comment.id }}"
+                data-count="{{ comment.replies.count }}"
+              >
+                <span class="toggle-icon">↳</span>
+                <span class="toggle-text">مشاهده {{ comment.replies.count }} پاسخ</span>
+              </button>
+              {% endif %}
 
-              <div class="comment-text">{{ comment.text }}</div>
-
-              <div class="comment-actions-row">
-                <button
-                  type="button"
-                  class="btn-comment-reply"
-                  data-username="{{ comment.author.username }}"
+              <div class="replies-box" id="replies-box-{{ comment.id }}" style="display: none;">
+                {% for reply in comment.replies.all %}
+                <div
+                  class="comment-item comment-reply-item"
+                  id="comment-node-{{ reply.id }}"
+                  data-comment-id="{{ reply.id }}"
+                  data-parent-id="{{ comment.id }}"
                 >
-                  پاسخ ↩
-                </button>
+                  <a href="{% url 'accounts:user_profile' reply.author.username %}" class="comment-avatar reply-avatar" style="text-decoration: none;">
+                    {% if reply.author.profile.avatar %}
+                    <img src="{{ reply.author.profile.avatar.url }}" alt="{{ reply.author.username }}" />
+                    {% else %}
+                    👨‍🚀
+                    {% endif %}
+                  </a>
 
-                {% if request.user.is_authenticated and comment.author != request.user %}
-                <a
-                  href="{% url 'direct:start_chat' comment.author.id %}"
-                  class="btn-comment-direct"
-                  title="مخابره مستقیم به این کاربر"
-                >
-                  💬 مخابره
-                </a>
-                {% endif %}
+                  <div class="comment-body">
+                    <div class="comment-header">
+                      <a href="{% url 'accounts:user_profile' reply.author.username %}" class="comment-author-name" style="text-decoration: none;">
+                        <span>{{ reply.author.username }}</span>
+                        {% if reply.author == post.author %}
+                        <span class="badge-op">پدیدآورنده</span>
+                        {% endif %}
+                      </a>
+                      <span class="comment-time">
+                        {{ reply.created_at|date:"Y-m-d // H:i" }}
+                      </span>
+                    </div>
 
-                {% if request.user.is_authenticated and comment.author == request.user or post.author == request.user %}
-                <form
-                  action="{% url 'interactions:delete_comment' comment.id %}"
-                  method="POST"
-                  style="margin: 0; display: inline;"
-                >
-                  {% csrf_token %}
-                  <button
-                    type="submit"
-                    class="btn-comment-delete"
-                    title="حذف این دیدگاه"
-                    onclick="return confirm('آیا از حذف این فرکانس از مدار اطمینان دارید؟');"
-                  >
-                    🗑️ حذف
-                  </button>
-                </form>
-                {% endif %}
+                    <div class="comment-text">{{ reply.text }}</div>
+
+                    <div class="comment-actions-row">
+                      <button
+                        type="button"
+                        class="btn-comment-reply"
+                        data-comment-id="{{ comment.id }}"
+                        data-username="{{ reply.author.username }}"
+                      >
+                        پاسخ ↩
+                      </button>
+
+                      {% if request.user.is_authenticated and reply.author != request.user %}
+                      <a
+                        href="{% url 'direct:start_chat' reply.author.id %}"
+                        class="btn-comment-direct"
+                        title="مخابره مستقیم به این کاربر"
+                      >
+                        💬 مخابره
+                      </a>
+                      {% endif %}
+
+                      {% if request.user.is_authenticated and reply.author == request.user or post.author == request.user %}
+                      <form
+                        action="{% url 'interactions:delete_comment' reply.id %}"
+                        method="POST"
+                        class="delete-comment-form"
+                        style="margin: 0; display: inline;"
+                      >
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn-comment-delete"
+                          title="حذف این پاسخ"
+                          data-comment-id="{{ reply.id }}"
+                        >
+                          🗑️ حذف
+                        </button>
+                      </form>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
               </div>
             </div>
           </div>
           {% empty %}
-          <div class="comments-empty-notice">
+          <div class="comments-empty-notice" id="comments-empty-notice">
             <span style="font-size: 2.2rem;">🛰️</span>
             <span style="font-weight: 700; color: #fff;">هنوز هیچ فرکانسی برای این پست مخابره نشده است.</span>
             <span>نخستین فضانوردی باشید که پیام خود را ثبت می‌کند!</span>
@@ -255,7 +351,7 @@
           {% endfor %}
         </div>
 
-        <!-- ۴. فرم ارسال دیدگاه جدید -->
+        <!-- ۴. فرم ارسال دیدگاه یا پاسخ -->
         {% if request.user.is_authenticated %}
         <form
           class="detail-comment-form"
@@ -264,6 +360,19 @@
           method="POST"
         >
           {% csrf_token %}
+          <input type="hidden" name="parent_id" id="reply-parent-id" value="" />
+
+          <!-- نوار فعال پاسخ‌دهی بالای اینپوت -->
+          <div class="reply-active-banner" id="reply-active-banner" style="display: none;">
+            <div class="reply-banner-content">
+              <span class="reply-banner-icon">↳</span>
+              <span>در حال پاسخ به</span>
+              <span class="reply-banner-username" id="reply-banner-target">@username</span>
+            </div>
+            <button type="button" class="btn-dismiss-reply" id="btn-dismiss-reply" title="لغو وضعیت پاسخ">
+              ✕
+            </button>
+          </div>
 
           <!-- نوار ایموجی‌های کیهانی -->
           <div class="comment-emoji-bar">
@@ -296,9 +405,9 @@
               required
             />
 
-            <button type="submit" class="btn-detail-comment-submit">
-              <span>ارسال</span>
-              <span>⚡</span>
+            <button type="submit" class="btn-detail-comment-submit" id="btn-comment-submit">
+              <span class="submit-text">ارسال</span>
+              <span class="submit-icon">⚡</span>
             </button>
           </div>
         </form>
@@ -306,7 +415,7 @@
         <div class="comment-guest-notice">
           <span>🚀</span>
           <span>
-            جهت ارسال دیدگاه، لطفاً ابتدا
+            جهت ارسال دیدگاه یا پاسخ، لطفاً ابتدا
             <a href="{% url 'accounts:login' %}" style="color: var(--accent-primary); font-weight: 700;">وارد شوید</a>
             یا
             <a href="{% url 'accounts:register' %}" style="color: var(--accent-secondary); font-weight: 700;">عضو شوید</a>.
@@ -323,10 +432,55 @@
         var commentInput = document.getElementById("detail-comment-input");
         var commentsBox = document.getElementById("comments-list-box");
         var commentForm = document.getElementById("detail-comment-form");
+        var replyParentIdInput = document.getElementById("reply-parent-id");
+        var replyBanner = document.getElementById("reply-active-banner");
+        var replyBannerTarget = document.getElementById("reply-banner-target");
+        var btnDismissReply = document.getElementById("btn-dismiss-reply");
+        var submitBtn = document.getElementById("btn-comment-submit");
+        var totalCounter = document.getElementById("total-comments-counter");
+        var metaCounter = document.getElementById("post-meta-comments-count");
 
-        // اسکرول هوشمند به آخرین دیدگاه ثبت‌شده در پایین لیست
+        // اسکرول هوشمند به آخرین دیدگاه ثبت‌شده
         if (commentsBox) {
           commentsBox.scrollTop = commentsBox.scrollHeight;
+        }
+
+        // تابع لغو وضعیت پاسخ‌دهی
+        function dismissReply() {
+          if (replyParentIdInput) replyParentIdInput.value = "";
+          if (replyBanner) replyBanner.style.display = "none";
+          if (commentInput) {
+            commentInput.placeholder = "دیدگاه خود را مخابره کنید... (Enter برای ارسال)";
+          }
+        }
+
+        if (btnDismissReply) {
+          btnDismissReply.addEventListener("click", function () {
+            dismissReply();
+            if (commentInput) commentInput.focus();
+          });
+        }
+
+        // فعال‌سازی وضعیت پاسخ به کاربر
+        function activateReply(commentId, username) {
+          if (replyParentIdInput) replyParentIdInput.value = commentId;
+          if (replyBannerTarget) replyBannerTarget.textContent = "@" + username;
+          if (replyBanner) replyBanner.style.display = "flex";
+          if (commentInput) {
+            commentInput.placeholder = "پاسخ خود به @" + username + " را بنویسید...";
+            // درج منشن در ابتدای پیام در صورتی که کاربر بخواهد
+            if (!commentInput.value.includes("@" + username)) {
+              commentInput.value = "@" + username + " " + commentInput.value;
+            }
+            commentInput.focus();
+            commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
+
+        // به‌روزرسانی شمارنده‌های دیدگاه
+        function updateCounters(newTotal) {
+          if (totalCounter) totalCounter.textContent = newTotal;
+          if (metaCounter) metaCounter.textContent = newTotal;
         }
 
         // درج ایموجی در کادر دیدگاه
@@ -340,26 +494,260 @@
           });
         });
 
-        // دکمه پاسخ سریع: درج نام کاربری در کادر متن
-        document.querySelectorAll(".btn-comment-reply").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            var username = btn.getAttribute("data-username");
-            if (username && commentInput) {
-              commentInput.value = "@" + username + " ";
-              commentInput.focus();
-              commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
-          });
-        });
+        // تابع قالب‌بندی منشن‌ها در متن
+        function formatMentions(text) {
+          var safe = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          return safe.replace(/(@[A-Za-z0-9_]+)/g, '<span class="mention-highlight">$1</span>');
+        }
 
-        // ارسال با کلید Enter (بدون Shift)
-        if (commentInput && commentForm) {
-          commentInput.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              commentForm.submit();
-            }
+        // ساخت المان HTML دیدگاه جدید
+        function buildCommentHtml(c) {
+          var avatarContent = c.author_avatar
+            ? '<img src="' + c.author_avatar + '" alt="' + c.author + '" />'
+            : '👨‍🚀';
+          var opBadge = c.is_op ? '<span class="badge-op">پدیدآورنده</span>' : '';
+          var deleteBtn = c.is_owner
+            ? '<form action="' + c.delete_url + '" method="POST" class="delete-comment-form" style="margin: 0; display: inline;">' +
+              '<input type="hidden" name="csrfmiddlewaretoken" value="' + (document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '') + '">' +
+              '<button type="submit" class="btn-comment-delete" title="حذف" data-comment-id="' + c.id + '">🗑️ حذف</button>' +
+              '</form>'
+            : '';
+
+          var itemClass = c.is_reply ? "comment-item comment-reply-item comment-new-animated" : "comment-item comment-new-animated";
+          var avatarClass = c.is_reply ? "comment-avatar reply-avatar" : "comment-avatar";
+          var rootParentId = c.parent_id || c.id;
+
+          return (
+            '<div class="' + itemClass + '" id="comment-node-' + c.id + '" data-comment-id="' + c.id + '" ' + (c.is_reply ? 'data-parent-id="' + c.parent_id + '"' : '') + '>' +
+              '<a href="' + c.user_profile_url + '" class="' + avatarClass + '" style="text-decoration: none;">' +
+                avatarContent +
+              '</a>' +
+              '<div class="comment-body">' +
+                '<div class="comment-header">' +
+                  '<a href="' + c.user_profile_url + '" class="comment-author-name" style="text-decoration: none;">' +
+                    '<span>' + c.author + '</span>' +
+                    opBadge +
+                  '</a>' +
+                  '<span class="comment-time">' + c.created_at + '</span>' +
+                '</div>' +
+                '<div class="comment-text">' + formatMentions(c.text) + '</div>' +
+                '<div class="comment-actions-row">' +
+                  '<button type="button" class="btn-comment-reply" data-comment-id="' + rootParentId + '" data-username="' + c.author + '">پاسخ ↩</button>' +
+                  deleteBtn +
+                '</div>' +
+              '</div>' +
+            '</div>'
+          );
+        }
+
+        // متصل‌سازی رویدادهای داینامیک دکمه‌های پاسخ، باز/بسته کردن پاسخ‌ها و حذف
+        function bindDynamicEvents() {
+          // دکمه‌های پاسخ
+          document.querySelectorAll(".btn-comment-reply").forEach(function (btn) {
+            if (btn.getAttribute("data-bound")) return;
+            btn.setAttribute("data-bound", "true");
+            btn.addEventListener("click", function () {
+              var cid = btn.getAttribute("data-comment-id");
+              var uname = btn.getAttribute("data-username");
+              if (cid && uname) activateReply(cid, uname);
+            });
           });
+
+          // دکمه‌های تاگل مشاهده پاسخ‌ها
+          document.querySelectorAll(".btn-toggle-replies").forEach(function (btn) {
+            if (btn.getAttribute("data-bound")) return;
+            btn.setAttribute("data-bound", "true");
+            btn.addEventListener("click", function () {
+              var targetId = btn.getAttribute("data-target");
+              var count = btn.getAttribute("data-count") || "0";
+              var targetBox = document.getElementById(targetId);
+              if (targetBox) {
+                if (targetBox.style.display === "none" || targetBox.style.display === "") {
+                  targetBox.style.display = "flex";
+                  btn.innerHTML = '<span class="toggle-icon">↰</span> <span class="toggle-text">بستن پاسخ‌ها</span>';
+                } else {
+                  targetBox.style.display = "none";
+                  btn.innerHTML = '<span class="toggle-icon">↳</span> <span class="toggle-text">مشاهده ' + count + ' پاسخ</span>';
+                }
+              }
+            });
+          });
+
+          // فرم‌های حذف به روش AJAX
+          document.querySelectorAll(".delete-comment-form").forEach(function (form) {
+            if (form.getAttribute("data-bound")) return;
+            form.setAttribute("data-bound", "true");
+            form.addEventListener("submit", function (e) {
+              e.preventDefault();
+              if (!confirm("آیا از حذف این فرکانس از مدار اطمینان دارید؟")) return;
+
+              var formData = new FormData(form);
+              fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+              })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                  if (data.status === "ok") {
+                    var node = document.getElementById("comment-node-" + data.deleted_id);
+                    if (node) {
+                      node.classList.add("comment-deleting");
+                      setTimeout(function () {
+                        if (data.was_reply && data.parent_id) {
+                          var repliesBox = document.getElementById("replies-box-" + data.parent_id);
+                          var threadGroup = document.getElementById("comment-thread-" + data.parent_id);
+                          node.remove();
+                          if (repliesBox) {
+                            var remaining = repliesBox.querySelectorAll(".comment-reply-item").length;
+                            var toggleBtn = threadGroup ? threadGroup.querySelector(".btn-toggle-replies") : null;
+                            if (toggleBtn) {
+                              if (remaining > 0) {
+                                toggleBtn.setAttribute("data-count", remaining);
+                                if (repliesBox.style.display !== "none") {
+                                  toggleBtn.innerHTML = '<span class="toggle-icon">↰</span> <span class="toggle-text">بستن پاسخ‌ها</span>';
+                                } else {
+                                  toggleBtn.innerHTML = '<span class="toggle-icon">↳</span> <span class="toggle-text">مشاهده ' + remaining + ' پاسخ</span>';
+                                }
+                              } else {
+                                toggleBtn.remove();
+                                repliesBox.remove();
+                              }
+                            }
+                          }
+                        } else {
+                          var threadGroup = document.getElementById("comment-thread-" + data.deleted_id);
+                          if (threadGroup) threadGroup.remove();
+                          else node.remove();
+                        }
+
+                        updateCounters(data.total_comments_count);
+
+                        if (data.total_comments_count === 0) {
+                          var emptyNotice = document.getElementById("comments-empty-notice");
+                          if (emptyNotice) emptyNotice.style.display = "flex";
+                        }
+                      }, 250);
+                    }
+                  }
+                })
+                .catch(function () {
+                  form.submit();
+                });
+            });
+          });
+        }
+
+        bindDynamicEvents();
+
+        // ارسال دیدگاه یا پاسخ با AJAX بدون رفرش کل صفحه
+        if (commentForm) {
+          commentForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var text = commentInput ? commentInput.value.trim() : "";
+            if (!text) return;
+
+            var formData = new FormData(commentForm);
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.style.opacity = "0.6";
+            }
+
+            fetch(commentForm.action, {
+              method: "POST",
+              body: formData,
+              headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+              .then(function (res) { return res.json(); })
+              .then(function (data) {
+                if (submitBtn) {
+                  submitBtn.disabled = false;
+                  submitBtn.style.opacity = "1";
+                }
+
+                if (data.status === "ok") {
+                  var c = data.comment;
+                  var newHtml = buildCommentHtml(c);
+
+                  if (c.is_reply && c.parent_id) {
+                    var threadGroup = document.getElementById("comment-thread-" + c.parent_id);
+                    if (threadGroup) {
+                      var wrapper = threadGroup.querySelector(".replies-wrapper");
+                      var repliesBox = document.getElementById("replies-box-" + c.parent_id);
+                      var toggleBtn = threadGroup.querySelector(".btn-toggle-replies");
+
+                      if (!repliesBox) {
+                        repliesBox = document.createElement("div");
+                        repliesBox.className = "replies-box";
+                        repliesBox.id = "replies-box-" + c.parent_id;
+                        wrapper.appendChild(repliesBox);
+                      }
+
+                      repliesBox.insertAdjacentHTML("beforeend", newHtml);
+                      repliesBox.style.display = "flex";
+
+                      var currentCount = repliesBox.querySelectorAll(".comment-reply-item").length;
+                      if (!toggleBtn) {
+                        toggleBtn = document.createElement("button");
+                        toggleBtn.type = "button";
+                        toggleBtn.className = "btn-toggle-replies";
+                        toggleBtn.setAttribute("data-target", "replies-box-" + c.parent_id);
+                        wrapper.insertBefore(toggleBtn, repliesBox);
+                      }
+                      toggleBtn.setAttribute("data-count", currentCount);
+                      toggleBtn.innerHTML = '<span class="toggle-icon">↰</span> <span class="toggle-text">بستن پاسخ‌ها</span>';
+
+                      var newElem = document.getElementById("comment-node-" + c.id);
+                      if (newElem) {
+                        newElem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                      }
+                    }
+                  } else {
+                    // دیدگاه سطح اول
+                    var threadHtml =
+                      '<div class="comment-thread-group" id="comment-thread-' + c.id + '">' +
+                        newHtml +
+                        '<div class="replies-wrapper" id="replies-wrapper-' + c.id + '"></div>' +
+                      '</div>';
+                    if (commentsBox) {
+                      commentsBox.insertAdjacentHTML("beforeend", threadHtml);
+                    }
+
+                    var emptyNotice = document.getElementById("comments-empty-notice");
+                    if (emptyNotice) emptyNotice.style.display = "none";
+
+                    var newElem = document.getElementById("comment-node-" + c.id);
+                    if (newElem) {
+                      newElem.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    }
+                  }
+
+                  updateCounters(data.total_comments_count);
+                  if (commentInput) commentInput.value = "";
+                  dismissReply();
+                  bindDynamicEvents();
+                } else {
+                  alert(data.error || "مخابره با خطا مواجه شد.");
+                }
+              })
+              .catch(function () {
+                if (submitBtn) {
+                  submitBtn.disabled = false;
+                  submitBtn.style.opacity = "1";
+                }
+                commentForm.submit();
+              });
+          });
+
+          // ارسال سریع با Enter
+          if (commentInput) {
+            commentInput.addEventListener("keydown", function (e) {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                commentForm.dispatchEvent(new Event("submit", { cancelable: true }));
+              }
+            });
+          }
         }
       });
     </script>

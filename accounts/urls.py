@@ -7,6 +7,7 @@ from .views import (
     profile_view,
     register_view,
     toggle_follow,
+    user_profile_view,
 )
 
 app_name = "accounts"
@@ -27,4 +28,6 @@ urlpatterns = [
         password_reset_confirm_view,
         name="password_reset_confirm",
     ),
+    path("user/<str:username>/", user_profile_view, name="user_profile"),
+    path("<str:username>/", user_profile_view, name="user_profile_short"),
 ]

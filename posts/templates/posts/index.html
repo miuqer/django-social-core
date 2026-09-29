@@ -159,7 +159,7 @@
         {% for post in posts %}
         <article class="cosmic-card">
           <header class="post-header">
-            <a href="{% if post.author == request.user %}{% url 'accounts:profile' %}{% else %}#{% endif %}" class="post-user">
+            <a href="{% url 'accounts:user_profile' post.author.username %}" class="post-user">
               <div class="avatar-small">
                 {% if post.author.profile.avatar %}
                 <img
@@ -250,7 +250,7 @@
 
             {% if post.caption %}
             <div class="caption-log">
-              <span class="caption-user">{{ post.author.username }}:</span>
+              <a href="{% url 'accounts:user_profile' post.author.username %}" class="caption-user" style="text-decoration: none; color: inherit;">{{ post.author.username }}:</a>
               <span>{{ post.caption }}</span>
             </div>
             {% endif %}
@@ -263,7 +263,7 @@
             <div class="frequency-stream">
               {% for comment in post.comments.all|slice:":3" %}
               <div class="frequency-msg">
-                <span class="sender-tag">{{ comment.author.username }}:</span>
+                <a href="{% url 'accounts:user_profile' comment.author.username %}" class="sender-tag" style="text-decoration: none; color: inherit;">{{ comment.author.username }}:</a>
                 <span>{{ comment.text }}</span>
               </div>
               {% empty %}
@@ -317,7 +317,7 @@
         {% if request.user.is_authenticated %}
         <div class="current-user-card">
           <div class="user-card-top">
-            <div class="user-meta">
+            <a href="{% url 'accounts:user_profile' request.user.username %}" class="user-meta" style="text-decoration: none; color: inherit;">
               <div class="avatar-small">
                 {% if request.user.profile.avatar %}
                 <img
@@ -330,16 +330,16 @@
                 <h4>{{ request.user.username }}</h4>
                 <span>{{ request.user.profile.full_name|default:"فضانورد بدون نام" }}</span>
               </div>
-            </div>
+            </a>
             <a href="{% url 'accounts:profile' %}" class="btn-manage">تنظیمات</a>
           </div>
 
           <!-- آمار سریع فضانورد -->
           <div class="user-quick-stats">
-            <div class="quick-stat">
+            <a href="{% url 'accounts:user_profile' request.user.username %}" class="quick-stat" style="text-decoration: none; color: inherit;">
               <span class="stat-number">{{ request.user.posts.count }}</span>
               <span class="stat-caption">پست</span>
-            </div>
+            </a>
             <a href="{% url 'accounts:profile' %}" class="quick-stat">
               <span class="stat-number">{{ request.user.follower_relations.count }}</span>
               <span class="stat-caption">دنبال‌کننده</span>
@@ -361,7 +361,7 @@
           <div class="connections-list">
             {% for rel in request.user.following_relations.all|slice:":6" %}
             <div class="connection-user-item">
-              <div class="connection-user-info">
+              <a href="{% url 'accounts:user_profile' rel.following.username %}" class="connection-user-info" style="text-decoration: none; color: inherit;">
                 <div class="avatar-tiny">
                   {% if rel.following.profile.avatar %}
                   <img src="{{ rel.following.profile.avatar.url }}" alt="{{ rel.following.username }}" />
@@ -371,7 +371,7 @@
                   <span class="connection-username">{{ rel.following.username }}</span>
                   <span class="connection-fullname">{{ rel.following.profile.full_name|default:"فضانورد مداری" }}</span>
                 </div>
-              </div>
+              </a>
               <div style="display: flex; gap: 6px; align-items: center;">
                 <a
                   href="{% url 'direct:start_chat' rel.following.id %}"
