@@ -1,0 +1,205 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="aurora">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مخابره استوری جدید | InstaOrbit</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'posts/css/story.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
+  </head>
+  <body class="create-story-page">
+    <div class="create-story-container">
+      <div class="story-create-card">
+        <!-- هدر فرم ارسال استوری -->
+        <header class="story-create-header">
+          <div class="story-create-title">
+            <span style="font-size: 1.4rem;">🪐</span>
+            <h2>مخابره استوری مداری</h2>
+            <span class="story-badge-24h">⏳ انقضا پس از ۲۴ ساعت</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="theme-dots-row">
+              <button type="button" class="theme-dot-btn theme-dot-aurora" data-theme-name="aurora" title="پالت زمردی"></button>
+              <button type="button" class="theme-dot-btn theme-dot-solar" data-theme-name="solar" title="پالت خورشیدی"></button>
+              <button type="button" class="theme-dot-btn theme-dot-ocean" data-theme-name="ocean" title="پالت اقیانوس"></button>
+              <button type="button" class="theme-dot-btn theme-dot-sunset" data-theme-name="sunset" title="پالت غروب"></button>
+            </div>
+            <a href="{% url 'posts:feed' %}" class="btn-back-feed">
+              ← بازگشت به فید
+            </a>
+          </div>
+        </header>
+
+        <!-- پیام‌های سیستمی و خطاها -->
+        {% if messages %}
+        <div class="messages-stream">
+          {% for message in messages %}
+          <div class="sys-msg {% if message.tags == 'error' %}sys-msg-error{% else %}sys-msg-success{% endif %}" style="padding: 10px 14px; border-radius: 12px; font-size: 0.82rem; display: flex; align-items: center; gap: 8px; {% if message.tags == 'error' %}background: rgba(244, 63, 94, 0.15); border: 1px solid var(--accent-danger); color: #fff;{% else %}background: rgba(0, 245, 155, 0.15); border: 1px solid var(--accent-primary); color: var(--text-glow);{% endif %}">
+            <span>{% if message.tags == 'error' %}⚠️{% else %}🛰️{% endif %}</span>
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- فرم ارسال استوری -->
+        <form method="POST" enctype="multipart/form-data" id="story-form">
+          {% csrf_token %}
+
+          <!-- دراپ‌زون عمودی انتخاب تصویر -->
+          <div class="story-dropzone-box" id="story-dropzone">
+            <!-- حالت اولیه قبل از انتخاب -->
+            <div class="story-dropzone-prompt" id="story-dropzone-prompt">
+              <span class="story-dropzone-icon">🌌</span>
+              <div class="story-dropzone-text">داده تصویری استوری را اینجا رها کنید یا کلیک نمایید</div>
+              <span class="story-dropzone-sub">تصاویر عمودی (نسبت ۹:۱۶) برای نمایش بهینه پیشنهاد می‌شوند</span>
+            </div>
+
+            <!-- پیش‌نمایش تصویر انتخاب‌شده -->
+            <div class="story-preview-wrap" id="story-preview-wrap">
+              <img id="story-preview-img" src="" alt="پیش‌نمایش استوری" />
+
+              <div class="story-preview-overlay-mockup">
+                <div class="story-preview-avatar">
+                  {% if request.user.profile.avatar %}
+                  <img src="{{ request.user.profile.avatar.url }}" alt="{{ request.user.username }}" />
+                  {% else %}
+                  👨‍🚀
+                  {% endif %}
+                </div>
+                <span style="font-size: 0.78rem; font-weight: 700;">{{ request.user.username }}</span>
+                <span style="font-size: 0.68rem; opacity: 0.75;">• هم‌اکنون</span>
+              </div>
+
+              <button
+                type="button"
+                id="btn-remove-story-img"
+                class="btn-remove-story-img"
+                title="حذف تصویر"
+              >
+                ✕
+              </button>
+            </div>
+
+            <input
+              type="file"
+              name="image"
+              id="story-image-input"
+              accept="image/*"
+              style="display: none;"
+              required
+            />
+          </div>
+
+          <!-- یادداشت و کپشن استوری -->
+          <div class="story-caption-group" style="margin-top: 14px;">
+            <div class="story-caption-header">
+              <label for="story-caption-input">یادداشت فرکانسی استوری (اختیاری)</label>
+              <span id="story-caption-counter">۰ / ۵۰۰</span>
+            </div>
+            <textarea
+              name="caption"
+              id="story-caption-input"
+              class="story-caption-input"
+              maxlength="500"
+              placeholder="نکته، حس لحظه‌ای یا پیام کوتاهی برای مسافران مدار بنویسید..."
+            ></textarea>
+          </div>
+
+          <!-- دکمه مخابره استوری -->
+          <button type="submit" class="btn-submit-story" id="btn-submit-story" style="margin-top: 16px;">
+            <span>🌟</span>
+            <span>مخابره استوری به مدار پایگاه</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var dropzone = document.getElementById("story-dropzone");
+        var fileInput = document.getElementById("story-image-input");
+        var promptBox = document.getElementById("story-dropzone-prompt");
+        var previewWrap = document.getElementById("story-preview-wrap");
+        var previewImg = document.getElementById("story-preview-img");
+        var removeBtn = document.getElementById("btn-remove-story-img");
+        var captionInput = document.getElementById("story-caption-input");
+        var captionCounter = document.getElementById("story-caption-counter");
+
+        // کلیک روی دراپ‌زون برای باز کردن فایل‌دیالوگ
+        dropzone.addEventListener("click", function (e) {
+          if (e.target !== removeBtn) {
+            fileInput.click();
+          }
+        });
+
+        // هندل انتخاب فایل
+        fileInput.addEventListener("change", function () {
+          if (fileInput.files && fileInput.files[0]) {
+            showPreview(fileInput.files[0]);
+          }
+        });
+
+        // دراگ و دراپ
+        ["dragenter", "dragover"].forEach(function (evt) {
+          dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add("dragover");
+          });
+        });
+
+        ["dragleave", "drop"].forEach(function (evt) {
+          dropzone.addEventListener(evt, function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove("dragover");
+          });
+        });
+
+        dropzone.addEventListener("drop", function (e) {
+          var files = e.dataTransfer.files;
+          if (files && files[0] && files[0].type.startsWith("image/")) {
+            fileInput.files = files;
+            showPreview(files[0]);
+          }
+        });
+
+        function showPreview(file) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            previewImg.src = e.target.result;
+            promptBox.style.display = "none";
+            previewWrap.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        }
+
+        // دکمه حذف تصویر
+        removeBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          fileInput.value = "";
+          previewImg.src = "";
+          previewWrap.style.display = "none";
+          promptBox.style.display = "flex";
+        });
+
+        // شمارنده کاراکتر کپشن
+        if (captionInput && captionCounter) {
+          captionInput.addEventListener("input", function () {
+            captionCounter.textContent = captionInput.value.length + " / ۵۰۰";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+

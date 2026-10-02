@@ -1,0 +1,317 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="aurora">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>استوری @{{ story.user.username }} | InstaOrbit</title>
+    <link
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
+    <link rel="stylesheet" href="{% static 'posts/css/story.css' %}" />
+    <script src="{% static 'posts/js/theme.js' %}"></script>
+  </head>
+  <body class="story-viewer-page">
+    <!-- پس‌زمینه با افکت بلور از تصویر استوری -->
+    <div
+      class="story-ambient-backdrop"
+      style="background-image: url('{{ story.image.url }}');"
+    ></div>
+
+    <!-- بدنه اصلی نمایش استوری -->
+    <main class="story-viewer-viewport" id="story-viewport">
+      <!-- ۱. نوارهای چندگانه پیشرفت زمان استوری (Segmented Progress Bars) -->
+      <div class="story-progress-row">
+        {% for s in user_stories %}
+        <div
+          class="story-progress-bar {% if forloop.counter0 < current_index %}completed{% elif forloop.counter0 == current_index %}active{% endif %}"
+          id="progress-bar-{{ forloop.counter0 }}"
+        >
+          <div class="story-progress-fill"></div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- ۲. هدر مشخصات فضانورد و زمان استوری -->
+      <header class="story-header-overlay">
+        <a href="{% url 'accounts:user_profile' story.user.username %}" class="story-author-meta">
+          <div class="story-header-avatar">
+            {% if story.user.profile.avatar %}
+            <img src="{{ story.user.profile.avatar.url }}" alt="{{ story.user.username }}" />
+            {% else %}
+            👨‍🚀
+            {% endif %}
+          </div>
+          <div class="story-header-names">
+            <span class="story-header-username">{{ story.user.username }}</span>
+            <span class="story-header-time">{{ story.created_at|timesince }} پیش</span>
+          </div>
+        </a>
+
+        <div class="story-header-controls">
+          <button
+            type="button"
+            class="btn-story-ctrl"
+            id="btn-toggle-pause"
+            title="توقف/پخش خودکار"
+          >
+            ⏸️
+          </button>
+          <a
+            href="{% url 'posts:feed' %}"
+            class="btn-story-ctrl"
+            id="btn-close-story"
+            title="بستن استوری"
+          >
+            ✕
+          </a>
+        </div>
+      </header>
+
+      <!-- ۳. ناحیه‌های لمسی برای حرکت به استوری قبلی و بعدی -->
+      {% if prev_story %}
+      <a
+        href="{% url 'posts:show_story' prev_story.id %}"
+        class="story-tap-prev"
+        id="tap-prev"
+        title="استوری قبلی"
+      ></a>
+      {% endif %}
+
+      {% if next_story %}
+      <a
+        href="{% url 'posts:show_story' next_story.id %}"
+        class="story-tap-next"
+        id="tap-next"
+        title="استوری بعدی"
+      ></a>
+      {% else %}
+      <a
+        href="{% url 'posts:feed' %}"
+        class="story-tap-next"
+        id="tap-next-feed"
+        title="پایان استوری‌ها"
+      ></a>
+      {% endif %}
+
+      <!-- ۴. تصویر اصلی استوری -->
+      <div class="story-media-container" id="story-media-container">
+        <img
+          src="{{ story.image.url }}"
+          alt="استوری {{ story.user.username }}"
+          class="story-main-img"
+          id="story-main-img"
+        />
+      </div>
+
+      <!-- ۵. یادداشت و کپشن استوری -->
+      {% if story.caption %}
+      <div class="story-caption-overlay">
+        {{ story.caption }}
+      </div>
+      {% endif %}
+
+      <!-- ۶. نوار پایین استوری -->
+      <footer class="story-bottom-bar">
+        {% if request.user == story.user %}
+        <!-- حالت صاحب استوری: مشاهده تعداد و لیست بینندگان -->
+        <button
+          type="button"
+          class="btn-owner-viewers"
+          id="btn-open-viewers"
+        >
+          <span>👁️</span>
+          <span>{{ story.views.count }} بازدیدکننده مداری</span>
+          <span style="font-size: 0.75rem; opacity: 0.8;">▲</span>
+        </button>
+        {% elif request.user.is_authenticated %}
+        <!-- حالت سایر کاربران: ارسال پاسخ مستقیم و ری‌اکشن سریع -->
+        <a
+          href="{% url 'direct:start_chat' story.user.id %}"
+          class="story-reply-form"
+          style="text-decoration: none;"
+          title="مخابره مستقیم به فضانورد"
+        >
+          <input
+            type="text"
+            class="story-reply-input"
+            placeholder="مخابره مستقیم به @{{ story.user.username }}..."
+            readonly
+          />
+          <span class="btn-send-story-reply">💬</span>
+        </a>
+
+        <div class="story-reactions-row">
+          <a href="{% url 'direct:start_chat' story.user.id %}" class="btn-story-reaction" title="آتشین">🔥</a>
+          <a href="{% url 'direct:start_chat' story.user.id %}" class="btn-story-reaction" title="قلب">❤️</a>
+          <a href="{% url 'direct:start_chat' story.user.id %}" class="btn-story-reaction" title="سیاره">🪐</a>
+          <a href="{% url 'direct:start_chat' story.user.id %}" class="btn-story-reaction" title="موشک">🚀</a>
+        </div>
+        {% else %}
+        <div style="flex: 1; text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.7);">
+          جهت تعامل با این استوری، وارد حساب خود شوید.
+        </div>
+        {% endif %}
+      </footer>
+
+      <!-- ۷. دراور و مدال نمایش لیست بازدیدکنندگان (مخصوص صاحب استوری) -->
+      {% if request.user == story.user %}
+      <div class="story-viewers-modal" id="viewers-modal" style="display: none;">
+        <div class="viewers-modal-header">
+          <h4>
+            <span>👁️</span>
+            <span>بینندگان این مخابره ({{ story.views.count }})</span>
+          </h4>
+          <button type="button" class="btn-close-viewers" id="btn-close-viewers">✕</button>
+        </div>
+
+        <div class="viewers-list">
+          {% for view in story_views %}
+          <div class="viewer-item">
+            <a href="{% url 'accounts:user_profile' view.viewer.username %}" class="viewer-meta">
+              <div class="viewer-avatar">
+                {% if view.viewer.profile.avatar %}
+                <img src="{{ view.viewer.profile.avatar.url }}" alt="{{ view.viewer.username }}" />
+                {% else %}
+                👨‍🚀
+                {% endif %}
+              </div>
+              <div>
+                <div class="viewer-name">{{ view.viewer.username }}</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">
+                  {{ view.viewer.profile.full_name|default:"فضانورد مدار" }}
+                </div>
+              </div>
+            </a>
+            <span class="viewer-time">{{ view.viewed_at|timesince }} پیش</span>
+          </div>
+          {% empty %}
+          <div class="viewers-empty">
+            <span style="font-size: 2rem;">🌌</span>
+            <p>هنوز فضانوردی از این استوری بازدید نکرده است.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </main>
+
+    <!-- اسکریپت پیشرفت خودکار زمان، مکث و ناوبری کلیدهای کیبورد -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var duration = 6000; // ۶ ثانیه برای هر استوری
+        var isPaused = false;
+        var timerId = null;
+        var activeBar = document.querySelector(".story-progress-bar.active");
+        var pauseBtn = document.getElementById("btn-toggle-pause");
+        var nextUrl = "{% if next_story %}{% url 'posts:show_story' next_story.id %}{% else %}{% url 'posts:feed' %}{% endif %}";
+        var prevUrl = "{% if prev_story %}{% url 'posts:show_story' prev_story.id %}{% endif %}";
+
+        // راه‌اندازی تایمر عبور به استوری بعدی
+        function startTimer() {
+          if (timerId) clearTimeout(timerId);
+          timerId = setTimeout(function () {
+            if (!isPaused) {
+              window.location.href = nextUrl;
+            }
+          }, duration);
+        }
+
+        startTimer();
+
+        // توقف یا ادامه تایمر
+        function togglePause() {
+          isPaused = !isPaused;
+          if (activeBar) {
+            activeBar.classList.toggle("paused", isPaused);
+          }
+          if (pauseBtn) {
+            pauseBtn.textContent = isPaused ? "▶️" : "⏸️";
+            pauseBtn.title = isPaused ? "ادامه پخش" : "توقف پخش";
+          }
+          if (isPaused) {
+            if (timerId) clearTimeout(timerId);
+          } else {
+            startTimer();
+          }
+        }
+
+        if (pauseBtn) {
+          pauseBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            togglePause();
+          });
+        }
+
+        // نگه‌داشتن ماوس/لمس برای توقف موقت و رها کردن برای ادامه
+        var viewport = document.getElementById("story-viewport");
+        if (viewport) {
+          viewport.addEventListener("mousedown", function (e) {
+            if (!e.target.closest("button") && !e.target.closest("a") && !e.target.closest("#viewers-modal")) {
+              if (!isPaused) togglePause();
+            }
+          });
+
+          viewport.addEventListener("mouseup", function (e) {
+            if (!e.target.closest("button") && !e.target.closest("a") && !e.target.closest("#viewers-modal")) {
+              if (isPaused) togglePause();
+            }
+          });
+
+          viewport.addEventListener("touchstart", function (e) {
+            if (!e.target.closest("button") && !e.target.closest("a") && !e.target.closest("#viewers-modal")) {
+              if (!isPaused) togglePause();
+            }
+          }, { passive: true });
+
+          viewport.addEventListener("touchend", function (e) {
+            if (!e.target.closest("button") && !e.target.closest("a") && !e.target.closest("#viewers-modal")) {
+              if (isPaused) togglePause();
+            }
+          });
+        }
+
+        // کنترل با کلیدهای جهت‌نما و Escape کیبورد
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            window.location.href = "{% url 'posts:feed' %}";
+          } else if (e.key === "ArrowLeft") {
+            // در زبان‌های راست‌به‌چپ، چپ = جلو
+            window.location.href = nextUrl;
+          } else if (e.key === "ArrowRight" && prevUrl) {
+            // راست = قبلی
+            window.location.href = prevUrl;
+          } else if (e.key === " ") {
+            e.preventDefault();
+            togglePause();
+          }
+        });
+
+        // هندل مدال بینندگان
+        var openViewersBtn = document.getElementById("btn-open-viewers");
+        var closeViewersBtn = document.getElementById("btn-close-viewers");
+        var viewersModal = document.getElementById("viewers-modal");
+
+        if (openViewersBtn && viewersModal) {
+          openViewersBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            viewersModal.style.display = "flex";
+            if (!isPaused) togglePause();
+          });
+        }
+
+        if (closeViewersBtn && viewersModal) {
+          closeViewersBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            viewersModal.style.display = "none";
+            if (isPaused) togglePause();
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+

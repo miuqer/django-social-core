@@ -13,6 +13,7 @@
     <!-- استاتیک‌های تفکیک‌شده تم و فید -->
     <link rel="stylesheet" href="{% static 'posts/css/theme.css' %}" />
     <link rel="stylesheet" href="{% static 'posts/css/feed.css' %}" />
+    <link rel="stylesheet" href="{% static 'posts/css/story.css' %}" />
     <script src="{% static 'posts/js/theme.js' %}"></script>
     <script>
       {% if request.user.is_authenticated %}
@@ -45,6 +46,9 @@
             </li>
             <li class="nav-item">
               <a href="{% url 'posts:create_post' %}">➕ مخابره پست جدید</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'posts:create_story' %}">🪐 مخابره استوری</a>
             </li>
             {% if request.user.is_authenticated %}
             <li class="nav-item">
@@ -117,42 +121,65 @@
 
         <!-- نوار مخابره‌های زنده (Stories) -->
         <div class="stories-bar">
-          <!-- استوری فضانورد لاگین‌شده -->
-          <div class="story-item">
-            <div class="story-ring">
-              <div class="story-avatar">
-                {% if request.user.is_authenticated and request.user.profile.avatar %}
-                <img
-                  src="{{ request.user.profile.avatar.url }}"
-                  alt="{{ request.user.username }}"
-                />
-                {% else %} 👨‍🚀 {% endif %}
+          <!-- استوری فضانورد جاری / افزودن استوری جدید -->
+          {% if request.user.is_authenticated %}
+            {% if user_has_story %}
+            <a href="{% url 'posts:show_story' user_first_story_id %}" class="story-item-link" title="مشاهده استوری شما">
+              <div class="story-ring-wrap unseen">
+                <div class="story-avatar-inner">
+                  {% if request.user.profile.avatar %}
+                  <img src="{{ request.user.profile.avatar.url }}" alt="{{ request.user.username }}" />
+                  {% else %} 👨‍🚀 {% endif %}
+                </div>
+                <span class="story-badge-plus" title="افزودن استوری جدید">+</span>
               </div>
+              <span class="story-item-username">استوری شما</span>
+            </a>
+            {% else %}
+            <a href="{% url 'posts:create_story' %}" class="story-item-link" title="مخابره استوری جدید">
+              <div class="story-ring-wrap add-mode">
+                <div class="story-avatar-inner">
+                  {% if request.user.profile.avatar %}
+                  <img src="{{ request.user.profile.avatar.url }}" alt="{{ request.user.username }}" />
+                  {% else %} 👨‍🚀 {% endif %}
+                </div>
+                <span class="story-badge-plus">+</span>
+              </div>
+              <span class="story-item-username">استوری شما</span>
+            </a>
+            {% endif %}
+          {% else %}
+          <a href="{% url 'accounts:login' %}" class="story-item-link" title="ورود برای مخابره استوری">
+            <div class="story-ring-wrap add-mode">
+              <div class="story-avatar-inner">👨‍🚀</div>
+              <span class="story-badge-plus">+</span>
             </div>
-            <span class="story-username">
-              {% if request.user.is_authenticated %}شما{% else %}میهمان{% endif %}
-            </span>
-          </div>
+            <span class="story-item-username">میهمان</span>
+          </a>
+          {% endif %}
 
-          <!-- نمونه استوری سایر مدارها -->
-          <div class="story-item">
-            <div class="story-ring">
-              <div class="story-avatar">🛰️</div>
+          <!-- استوری‌های فعال سایر کاربران مدار -->
+          {% for item in story_items %}
+            {% if item.user != request.user %}
+            <a href="{% url 'posts:show_story' item.first_story_id %}" class="story-item-link" title="استوری @{{ item.user.username }}">
+              <div class="story-ring-wrap {% if item.has_unseen %}unseen{% else %}seen{% endif %}">
+                <div class="story-avatar-inner">
+                  {% if item.user.profile.avatar %}
+                  <img src="{{ item.user.profile.avatar.url }}" alt="{{ item.user.username }}" />
+                  {% else %} 👨‍🚀 {% endif %}
+                </div>
+              </div>
+              <span class="story-item-username">{{ item.user.username }}</span>
+            </a>
+            {% endif %}
+          {% empty %}
+            {% if not user_has_story %}
+            <div style="font-size: 0.76rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; padding: 0 10px;">
+              <span>🌌</span>
+              <span>مدار استوری‌ها آماده مخابره است!</span>
             </div>
-            <span class="story-username">Apollo_X</span>
-          </div>
-          <div class="story-item">
-            <div class="story-ring">
-              <div class="story-avatar">🪐</div>
-            </div>
-            <span class="story-username">Cosmos_1</span>
-          </div>
-          <div class="story-item">
-            <div class="story-ring">
-              <div class="story-avatar">📡</div>
-            </div>
-            <span class="story-username">Radio_Deep</span>
-          </div>
+            {% endif %}
+          {% endfor %}
         </div>
 
         <!-- کارت‌های پست -->

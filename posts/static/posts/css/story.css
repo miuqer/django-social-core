@@ -1,0 +1,868 @@
+/* ==========================================================================
+   InstaOrbit - Cosmic Story Engine Stylesheet (Creation, Viewing & Feed Bar)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   ۱. نوار استوری در فید اصلی (Feed Stories Bar)
+   -------------------------------------------------------------------------- */
+.stories-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 12px 14px;
+  background: var(--hull-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  scrollbar-width: none;
+}
+
+.stories-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.story-item-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.story-item-link:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.story-ring-wrap {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  padding: 2.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* حلقه استوری دیده‌نشده با گرادیان درخشان نئونی */
+.story-ring-wrap.unseen {
+  background: var(--ring-gradient);
+  box-shadow: 0 0 16px rgba(0, 245, 155, 0.35);
+  animation: orbitRingPulse 3s infinite ease-in-out;
+}
+
+/* حلقه استوری دیده‌شده */
+.story-ring-wrap.seen {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+/* دکمه افزودن استوری */
+.story-ring-wrap.add-mode {
+  background: var(--border-subtle);
+  border: 1.5px dashed var(--accent-primary);
+}
+
+.story-ring-wrap.add-mode:hover {
+  background: rgba(0, 245, 155, 0.12);
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-shadow);
+}
+
+@keyframes orbitRingPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(0, 245, 155, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(0, 245, 155, 0.65);
+  }
+}
+
+.story-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--space-surface);
+  border: 2px solid var(--space-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 1.5rem;
+}
+
+.story-avatar-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-badge-plus {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--space-black);
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+.story-item-username {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-glow);
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   ۲. صفحه ایجاد استوری جدید (create_story.html)
+   -------------------------------------------------------------------------- */
+.create-story-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background-color: var(--space-black);
+  background-image: var(--bg-stars);
+  background-attachment: fixed;
+  color: var(--text-glow);
+}
+
+.create-story-container {
+  width: 100%;
+  max-width: 520px;
+}
+
+.story-create-card {
+  background: var(--hull-panel);
+  border: 1px solid var(--border-glow);
+  border-radius: 24px;
+  padding: 28px 24px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), var(--glow-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.story-create-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 16px;
+}
+
+.story-create-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.story-create-title h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-glow);
+  margin: 0;
+}
+
+.story-badge-24h {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  background: rgba(0, 245, 155, 0.1);
+  border: 1px solid var(--accent-primary);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.btn-back-feed {
+  padding: 6px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-glow);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-back-feed:hover {
+  background: var(--accent-primary);
+  color: #000;
+  border-color: var(--accent-primary);
+}
+
+/* دراپ‌زون استوری با نسبت ابعاد عمودی */
+.story-dropzone-box {
+  width: 100%;
+  height: 380px;
+  border: 2px dashed var(--border-glow);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.story-dropzone-box:hover {
+  border-color: var(--accent-primary);
+  background: rgba(0, 245, 155, 0.04);
+  box-shadow: inset 0 0 24px rgba(0, 245, 155, 0.08);
+}
+
+.story-dropzone-box.dragover {
+  border-color: var(--accent-highlight);
+  background: rgba(0, 245, 155, 0.08);
+  transform: scale(1.01);
+}
+
+.story-dropzone-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.story-dropzone-icon {
+  font-size: 3.2rem;
+  filter: drop-shadow(0 0 16px var(--accent-primary));
+  animation: floatOrbital 3s infinite ease-in-out;
+}
+
+@keyframes floatOrbital {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.story-dropzone-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-glow);
+}
+
+.story-dropzone-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* پیش‌نمایش تصویر در دراپ‌زون */
+.story-preview-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: none;
+}
+
+.story-preview-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.story-preview-overlay-mockup {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+}
+
+.story-preview-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.story-preview-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-remove-story-img {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(244, 63, 94, 0.85);
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.btn-remove-story-img:hover {
+  background: var(--accent-danger);
+  transform: scale(1.12);
+}
+
+/* کادر شرح یا کپشن استوری */
+.story-caption-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.story-caption-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.story-caption-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 12px 16px;
+  color: var(--text-glow);
+  font-family: inherit;
+  font-size: 0.88rem;
+  resize: vertical;
+  min-height: 70px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.story-caption-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 16px rgba(0, 245, 155, 0.2);
+}
+
+.btn-submit-story {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--ring-gradient);
+  color: #000;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 245, 155, 0.35);
+}
+
+.btn-submit-story:hover {
+  box-shadow: 0 6px 28px rgba(0, 245, 155, 0.55);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   ۳. نمایش تمام‌صفحه استوری (show_story.html)
+   -------------------------------------------------------------------------- */
+body.story-viewer-page {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Vazirmatn", sans-serif;
+  color: #fff;
+  user-select: none;
+}
+
+/* پس‌زمینه با افکت بلور از تصویر استوری */
+.story-ambient-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(50px) brightness(0.28);
+  transform: scale(1.15);
+  z-index: 1;
+}
+
+.story-viewer-viewport {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  max-height: 880px;
+  background: #050505;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), var(--glow-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 480px) {
+  .story-viewer-viewport {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+/* نوارهای تقسیم‌شده پیشرفت بالا (Segmented Progress Bars) */
+.story-progress-row {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  display: flex;
+  gap: 5px;
+  z-index: 30;
+}
+
+.story-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.story-progress-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0%;
+  background: #fff;
+  border-radius: 3px;
+}
+
+.story-progress-bar.completed .story-progress-fill {
+  width: 100%;
+}
+
+.story-progress-bar.active .story-progress-fill {
+  animation: storyProgressAnimation 6s linear forwards;
+}
+
+.story-progress-bar.active.paused .story-progress-fill {
+  animation-play-state: paused;
+}
+
+@keyframes storyProgressAnimation {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* هدر مشخصات فضانورد بالای استوری */
+.story-header-overlay {
+  position: absolute;
+  top: 24px;
+  right: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent);
+  padding: 8px 4px;
+}
+
+.story-author-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.story-header-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-primary);
+  background: var(--hull-solid);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0, 245, 155, 0.4);
+}
+
+.story-header-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story-header-names {
+  display: flex;
+  flex-direction: column;
+}
+
+.story-header-username {
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.story-header-time {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.story-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-story-ctrl {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.btn-story-ctrl:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* تصویر اصلی استوری */
+.story-media-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.story-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: zoomStorySlow 6s ease-out;
+}
+
+@keyframes zoomStorySlow {
+  from { transform: scale(1.03); }
+  to { transform: scale(1); }
+}
+
+/* ناحیه‌های لمسی برای پیمایش چپ و راست (Touch Navigation Zones) */
+.story-tap-prev,
+.story-tap-next {
+  position: absolute;
+  top: 70px;
+  bottom: 80px;
+  width: 40%;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.story-tap-prev {
+  right: 0;
+}
+
+.story-tap-next {
+  left: 0;
+}
+
+/* کپشن استوری */
+.story-caption-overlay {
+  position: absolute;
+  bottom: 84px;
+  right: 14px;
+  left: 14px;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* نوار پایین استوری (پاسخ دایرکت یا لیست بازدیدکنندگان) */
+.story-bottom-bar {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  left: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* فرم پاسخ مستقیم */
+.story-reply-form {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 4px 12px 4px 6px;
+  transition: all 0.2s ease;
+}
+
+.story-reply-form:focus-within {
+  border-color: var(--accent-primary);
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.story-reply-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.84rem;
+  padding: 8px 4px;
+}
+
+.story-reply-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-send-story-reply {
+  background: var(--accent-primary);
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-send-story-reply:hover {
+  transform: scale(1.1);
+}
+
+.story-reactions-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-story-reaction {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-story-reaction:hover {
+  transform: scale(1.25);
+}
+
+/* دکمه مشاهده بازدیدکنندگان برای صاحب استوری */
+.btn-owner-viewers {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glow);
+  color: var(--text-glow);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-owner-viewers:hover {
+  background: var(--accent-primary);
+  color: #000;
+  box-shadow: var(--glow-strong);
+}
+
+/* مدال / دراور لیست بازدیدکنندگان */
+.story-viewers-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(20px);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 18px;
+  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.viewers-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.viewers-modal-header h4 {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-close-viewers {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.viewers-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 4px;
+}
+
+.viewer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.viewer-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.viewer-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.viewer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.viewer-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.viewer-time {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.viewers-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
+  margin-top: 40px;
+}
+
